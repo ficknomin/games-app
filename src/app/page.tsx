@@ -1,10 +1,11 @@
-import Image from "next/image";
+import HomePage from "./HomePage";
 
-export default function Home() {
+const Home = () => {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center font-sans bg-background">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-background sm:items-start">
-      </main>
+    <div className="flex flex-col flex-1 items-center justify-center bg-background">
+      <HomePage />
     </div>
   );
 }
+
+export default Home;
