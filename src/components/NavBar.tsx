@@ -23,7 +23,7 @@ const NavBar = () => {
         </NavigationMenu>
 
       </div>
-    </div>
+    </div >
   )
 }
 
