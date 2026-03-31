@@ -19,7 +19,7 @@ const GameCard = ({ game }: { game: Game }) => {
 
       <CardHeader className="p-3">
         <CardTitle className="text-sm text-left line-clamp-2">{game.name}</CardTitle>
-        <CardDescription className="text-xs text-left text-muted-foreground">{game.released.split("-")[0]}</CardDescription>
+        <CardDescription className="text-xs text-left text-muted-foreground">{game.released ? game.released.split("-")[0] : "TBA"}</CardDescription>
       </CardHeader>
 
       <CardContent className="px-3 pb-3 flex justify-end">
