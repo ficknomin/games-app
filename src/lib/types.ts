@@ -26,16 +26,17 @@ export type Game = {
   background_image: string;
   rating: number;
   metacritic: string;
-  genres: Genre[];
-  parent_platforms: { platform: Platform }[];
+  genres: string[];
+  platforms: string[];
 
+  parent_platforms: { platform: Platform }[];
 }
 
 export type GamesResponse = {
   results: Game[];
   count: number;
-  next: string | null;
-  previous: string | null;
+  next: boolean | null;
+  previous: boolean | null;
 }
 
 export type FavoriteGame = {

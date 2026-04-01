@@ -1,47 +1,58 @@
 import { GamesListFilters } from "@/components/GamesList";
 import { Game, GamesResponse } from "../lib/types";
-
-const PAGE_SIZE = 10;
+import { supabase } from "@/db/client";
 
 export const fetchGames = async (filters: GamesListFilters): Promise<GamesResponse> => {
-  const params = new URLSearchParams();
+  const PAGE_SIZE = 10;
+  const from = (filters.page - 1) * PAGE_SIZE;
+  const to = from + PAGE_SIZE - 1;
 
-  params.append("key", process.env.NEXT_PUBLIC_RAWG_API_KEY!);
-  params.append("page", filters.page.toString());
-  params.append("page_size", PAGE_SIZE.toString());
+  let query = supabase
+    .from("games")
+    .select("*", { count: "exact" })
+    .range(from, to);
 
   if (filters.search?.trim()) {
-    params.append("search", filters.search.trim());
+    query = query.ilike("name", `%${filters.search}%`);
   }
 
   if (filters.genre) {
-    params.append("genres", filters.genre);
+    query = query.contains("genres", [filters.genre]);
   }
 
   if (filters.platform) {
-    params.append("platforms", filters.platform);
+    query = query.contains("platforms", [filters.platform]);
   }
 
-  console.log(`https://api.rawg.io/api/games?${params.toString()}`);
+  const { data, error, count } = await query;
 
-  const response = await fetch(`https://api.rawg.io/api/games?${params.toString()}`);
-
-
-  if (!response.ok) {
-    throw new Error(`Failed to fetch games: ${response.statusText}`);
+  if (error) {
+    throw new Error(`Failed to fetch games: ${error.message}`);
   }
 
-  return response.json();
+
+  return {
+    results: data || [],
+    count: count ?? 0,
+    next: count !== null ? to + 1 < count : false,
+    previous: filters.page > 1,
+  }
 }
 
 export const fetchGame = async (id: string): Promise<Game> => {
-  const response = await fetch(`https://api.rawg.io/api/games/${id}?key=${process.env.NEXT_PUBLIC_RAWG_API_KEY}`);
+  const query = supabase
+    .from("games")
+    .select("*")
+    .eq("id", id)
 
-  if (!response.ok) {
-    throw new Error(`Failed to fetch games: ${response.statusText}`);
+  const { data, error } = await query;
+
+
+  if (error) {
+    throw new Error(`Failed to fetch games: ${error}`);
   }
 
-  return response.json();
+  return data[0];
 }
 
 export const fetchGenres = async () => {

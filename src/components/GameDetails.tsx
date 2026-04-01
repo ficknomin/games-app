@@ -3,7 +3,6 @@
 import { useGame } from "@/hooks/useGame";
 import { Spinner } from "./ui/spinner";
 import Image from "next/image";
-import { Genre, Platform } from "@/lib/types";
 import { Badge } from "./ui/badge";
 
 type GameDetailsProps = {
@@ -11,7 +10,8 @@ type GameDetailsProps = {
 }
 
 const GameDetails = ({ id }: GameDetailsProps) => {
-  const { isLoading, isError, data, error, refetch } = useGame(id);
+  const { isLoading, isError, data, error } = useGame(id);
+  console.log(data);
 
   if (isLoading) {
     return (
@@ -64,11 +64,11 @@ const GameDetails = ({ id }: GameDetailsProps) => {
           </div>
 
           <div className="flex items-center gap-2 mt-4 flex-wrap">
-            {data.genres.map((g: Genre) => (
-              <Badge key={g.id} variant="secondary" className="rounded-sm text-xs text-foreground">{g.name}</Badge>
+            {data.genres.map((genre) => (
+              <Badge key={genre} variant="secondary" className="rounded-sm text-xs text-foreground">{genre}</Badge>
             ))}
-            {data.parent_platforms.map(({ platform }: { platform: Platform }) => (
-              <span key={platform.id} className="text-xs text-muted-foreground">{platform.name} ·</span>
+            {data.platforms.map((platform) => (
+              <span key={platform} className="text-xs text-muted-foreground">{platform} ·</span>
             ))}
           </div>
         </div>

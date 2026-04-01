@@ -62,6 +62,8 @@ const GamesList = () => {
     );
   }
 
+  console.log(gamesData);
+
   return (
 
     <div className="w-full max-w-6xl mx-auto">
@@ -91,7 +93,7 @@ const GamesList = () => {
                       </SelectItem>
                     ) : (
                       genresData?.map((genre: GenreFilter) => (
-                        <SelectItem key={genre.value} value={genre.value}>
+                        <SelectItem key={genre.value} value={genre.label}>
                           {genre.label}
                         </SelectItem>
                       ))
@@ -121,7 +123,7 @@ const GamesList = () => {
                       </SelectItem>
                     ) : (
                       platformsData?.map((platform: PlatformFilter) => (
-                        <SelectItem key={platform.value} value={platform.value}>
+                        <SelectItem key={platform.value} value={platform.label}>
                           {platform.label}
                         </SelectItem>
                       ))
@@ -158,7 +160,10 @@ const GamesList = () => {
       <Pagination className="flex justify-center mt-16">
         <PaginationContent>
           <PaginationItem>
-            <PaginationPrevious onClick={() => setFilters((prev) => ({ ...prev, page: Math.max(prev.page - 1, 1) }))} className={filters.page === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"} />
+            <PaginationPrevious onClick={() =>
+              gamesData?.previous &&
+              setFilters((prev) => ({ ...prev, page: prev.page - 1 }))
+            } className={!gamesData?.previous ? "pointer-events-none opacity-50" : "cursor-pointer"} />
           </PaginationItem>
           <PaginationItem>
             <span className="px-4 text-sm text-muted-foreground">
@@ -167,7 +172,10 @@ const GamesList = () => {
           </PaginationItem>
           <PaginationItem>
             <PaginationNext
-              onClick={() => setFilters((prev) => ({ ...prev, page: prev.page + 1 }))}
+              onClick={() =>
+                gamesData?.next &&
+                setFilters((prev) => ({ ...prev, page: prev.page + 1 }))
+              }
               className={!gamesData?.next ? "pointer-events-none opacity-50" : "cursor-pointer"}
             />
           </PaginationItem>

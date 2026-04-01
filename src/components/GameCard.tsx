@@ -17,8 +17,7 @@ const GameCard = ({ game }: { game: Game | FavoriteGame }) => {
   return (
     <Card onClick={() => router.push(`/games/${game.id}`)} className="group p-0 rounded-sm overflow-hidden bg-card shadow-md hover:shadow-lg transition-shadow cursor-pointer">
       <div className="relative w-full aspect-video flex">
-        <Image src={game.background_image} alt={game.name} fill className="object-cover transition-transform duration-300 group-hover:scale-105" />
-
+        <Image src={game.background_image} alt={game.name} sizes="auto" fill className="object-cover transition-transform duration-299 group-hover:scale-105" />
       </div>
 
       <CardHeader className="p-3">
