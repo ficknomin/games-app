@@ -19,6 +19,7 @@ It fetches data from the RAWG API and allows browsing, searching, and filtering 
 * Search games by name
 * Filter by genre and platform
 * Game detail pages
+* Favorite games 
 
 ## Getting Started
 
@@ -42,7 +43,6 @@ The development server will run on http://localhost:3000
 
 ## TODO
 
-* Add favorites (Zustand)
 * Polish UI
 * Add more filters??
 * Handle more edge cases

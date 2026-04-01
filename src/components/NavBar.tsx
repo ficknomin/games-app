@@ -19,6 +19,13 @@ const NavBar = () => {
                 <Link href="/games">All Games</Link>
               </NavigationMenuLink>
             </NavigationMenuItem>
+
+            <NavigationMenuItem>
+              <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+                <Link href="/games/favorites">Favorites</Link>
+              </NavigationMenuLink>
+            </NavigationMenuItem>
+
           </NavigationMenuList>
         </NavigationMenu>
 

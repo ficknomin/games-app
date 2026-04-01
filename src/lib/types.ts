@@ -37,3 +37,10 @@ export type GamesResponse = {
   next: string | null;
   previous: string | null;
 }
+
+export type FavoriteGame = {
+  id: number;
+  name: string;
+  background_image: string;
+  released?: string;
+};
