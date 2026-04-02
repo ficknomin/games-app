@@ -1,34 +1,37 @@
 import { useEffect } from "react";
 import { useAuth } from "./useAuth"
 import { useFavoritesStore } from "./useFavoritesStore";
-import { fetchFavoritesDB } from "@/api/favorites";
+import { syncFavoritesOnLogin } from "@/api/favorites";
 import { supabase } from "@/db/client";
 
 export const useSyncFavorites = () => {
   const { user } = useAuth();
   const setFavorites = useFavoritesStore((s) => s.setFavorites);
+  const favoritesMap = useFavoritesStore((s) => s.favorites);
 
   useEffect(() => {
     if (!user) return;
 
-    const loadFavorites = async () => {
-      const data = await fetchFavoritesDB();
+    const sync = async () => {
+      const localFavorites = Object.values(favoritesMap);
+      const mergedIds = await syncFavoritesOnLogin(localFavorites);
 
-      const gameIds = data.map((g) => g.game_id);
 
-      if (gameIds.length === 0) {
+      if (mergedIds.length === 0) {
         setFavorites([]);
         return;
       }
 
-      const { data: games } = await supabase
+      const { data: games, error } = await supabase
         .from("games")
         .select("*")
-        .in("id", gameIds);
+        .in("id", mergedIds);
+
+      if (error) throw error;
 
       setFavorites(games || []);
     };
 
-    loadFavorites();
-  }, [user, setFavorites]);
+    sync();
+  }, [user]);
 };

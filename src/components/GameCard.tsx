@@ -7,12 +7,14 @@ import { Button } from "./ui/button";
 import { ArrowRight, Heart } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useToggleFavorites } from "@/hooks/useToggleFavorites";
+import { useFavoritesStore } from "@/hooks/useFavoritesStore";
 
 
 const GameCard = ({ game }: { game: Game | FavoriteGame }) => {
   const router = useRouter();
-  const { toggleFavorite, isFavorite } = useToggleFavorites();
-  const favorite = isFavorite(game.id);
+  const favorite = useFavoritesStore((s) => !!s.favorites[game.id]);
+  const toggleFavorite = useToggleFavorites().toggleFavorite;
+
 
   return (
     <Card onClick={() => router.push(`/games/${game.id}`)} className="group p-0 rounded-sm overflow-hidden bg-card shadow-md hover:shadow-lg transition-shadow cursor-pointer">

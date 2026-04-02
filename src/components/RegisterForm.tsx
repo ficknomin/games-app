@@ -8,6 +8,7 @@ import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
+import { useEffect } from "react";
 
 type RegisterFormData = {
   email: string;
@@ -21,7 +22,11 @@ export const RegisterForm = () => {
 
   const { user } = useAuth();
 
-  if (user) router.push("/games");
+  useEffect(() => {
+    if (user) {
+      router.replace("/games");
+    }
+  }, [user, router]);
 
   const onSubmit = async (data: RegisterFormData) => {
     try {
