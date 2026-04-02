@@ -6,6 +6,11 @@ export const useFavoritesStore = create<FavoritesStore>()(
   persist((set, get) => ({
     favorites: {},
 
+    setFavorites: (games) =>
+      set({
+        favorites: Object.fromEntries(games.map((g) => [g.id, g]))
+      }),
+
     addFavorite: (game) =>
       set((state) => ({
         favorites: {
@@ -13,21 +18,14 @@ export const useFavoritesStore = create<FavoritesStore>()(
           [game.id]: game,
         }
       })),
+
     removeFavorite: (id) =>
       set((state) => {
         const updated = { ...state.favorites };
         delete updated[id];
         return { favorites: updated }
       }),
-    toggleFavorite: (game) => {
-      const exists = get().favorites[game.id];
 
-      if (exists) {
-        get().removeFavorite(game.id);
-      } else {
-        get().addFavorite(game);
-      }
-    },
     isFavorite: (id) => {
       return !!get().favorites[id];
     },

@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, navigationMenuTriggerStyle } from "./ui/navigation-menu"
+import UserButton from "./UserButton";
 
 const NavBar = () => {
   return (
@@ -29,6 +30,7 @@ const NavBar = () => {
           </NavigationMenuList>
         </NavigationMenu>
 
+        <UserButton />
       </div>
     </div >
   )

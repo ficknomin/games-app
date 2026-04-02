@@ -3,6 +3,7 @@ import { Nunito_Sans, Figtree } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Provider } from "@/components/Provider";
+import { SyncProvider } from "@/components/SyncProvider";
 
 const figtreeHeading = Figtree({ subsets: ['latin'], variable: '--font-heading' });
 
@@ -26,7 +27,9 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <Provider>
-          {children}
+          <SyncProvider>
+            {children}
+          </SyncProvider>
         </Provider>
       </body>
     </html>

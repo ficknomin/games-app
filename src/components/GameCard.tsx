@@ -6,12 +6,12 @@ import Image from "next/image";
 import { Button } from "./ui/button";
 import { ArrowRight, Heart } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useFavoritesStore } from "@/hooks/useFavoritesStore";
+import { useToggleFavorites } from "@/hooks/useToggleFavorites";
 
 
 const GameCard = ({ game }: { game: Game | FavoriteGame }) => {
   const router = useRouter();
-  const { toggleFavorite, isFavorite } = useFavoritesStore();
+  const { toggleFavorite, isFavorite } = useToggleFavorites();
   const favorite = isFavorite(game.id);
 
   return (

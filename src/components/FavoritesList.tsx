@@ -2,10 +2,24 @@
 
 import { useFavoritesStore } from "@/hooks/useFavoritesStore";
 import GameCard from "./GameCard";
+import { useAuth } from "@/hooks/useAuth";
+
 
 const FavoritesList = () => {
   const favorites = useFavoritesStore((state) => state.favorites);
   const games = Object.values(favorites);
+  const { user } = useAuth();
+
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-background">
+        <main className="max-w-7xl mx-auto px-6 py-16">
+          <h1 className="text-3xl font-bold px-2 pb-5 md:ms-10 -mt-5">Favorite Games</h1>
+          <p className="text-xl text-muted-foreground text-center mt-8">You need to login to view your favorites...</p>
+        </main>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-background">
