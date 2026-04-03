@@ -4,27 +4,27 @@ import { useGame } from "@/hooks/useGame";
 import { Spinner } from "./ui/spinner";
 import Image from "next/image";
 import { Badge } from "./ui/badge";
+import { LoadingState } from "./states/LoadingState";
+import { ErrorState } from "./states/ErrorState";
 
 type GameDetailsProps = {
   id: string;
 }
 
 const GameDetails = ({ id }: GameDetailsProps) => {
-  const { isLoading, isError, data, error } = useGame(id);
+  const { isLoading, isError, data, error, refetch } = useGame(id);
   console.log(data);
 
   if (isLoading) {
     return (
-      <div className="flex justify-center py-28">
-        <Spinner className="animate-spin" />
-      </div>
+      <LoadingState />
     );
 
   }
 
   if (isError) {
     return (
-      <p className="text-destructive text-center text-xl">Failed to load the game data: {error?.message}</p>
+      <ErrorState message={error?.message} onRetry={refetch} />
     )
   }
 
@@ -58,7 +58,7 @@ const GameDetails = ({ id }: GameDetailsProps) => {
             <div>
               <h1 className="text-2xl font-bold">{data.name}</h1>
               <div className="flex items-center gap-2 mt-1 flex-wrap">
-                <span className="text-sm text-muted-foreground">{data.released.split("-")[0]}</span>
+                <span className="text-sm text-muted-foreground">{data.released ? data.released.split("-")[0] : "TBA"}</span>
               </div>
             </div>
           </div>

@@ -1,6 +1,6 @@
 import { GamesListFilters } from "@/components/GamesList"
 import { fetchGames } from "../api/games"
-import { Game, GamesResponse } from "@/lib/types"
+import { GamesResponse } from "@/lib/types"
 import { useQuery } from "@tanstack/react-query"
 
 export const useGames = (filters: GamesListFilters) => {

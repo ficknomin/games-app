@@ -2,13 +2,11 @@
 
 import { useFavoritesStore } from "@/hooks/useFavoritesStore";
 import GameCard from "./GameCard";
-import { useAuth } from "@/hooks/useAuth";
 
 
 const FavoritesList = () => {
   const favorites = useFavoritesStore((state) => state.favorites);
   const games = Object.values(favorites);
-  const { user } = useAuth();
 
 
   return (

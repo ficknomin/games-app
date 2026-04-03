@@ -15,11 +15,11 @@ const UserButton = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant={"ghost"} className="hover:cursor-pointer">
+        <Button variant={"ghost"} className="hover:cursor-pointer rounded-sm">
           <UserIcon />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-40" align="start">
+      <DropdownMenuContent className="w-40 rounded-xs" align="start">
         <DropdownMenuGroup>
           <DropdownMenuLabel>My Account</DropdownMenuLabel>
           {

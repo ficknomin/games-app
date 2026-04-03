@@ -11,19 +11,19 @@ const NavBar = () => {
           <NavigationMenuList className="flex items-center justify-start gap-4 p-4">
             <NavigationMenuItem>
               <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-                <Link href="/">Home</Link>
+                <Link href="/" className="rounded-sm">Home</Link>
               </NavigationMenuLink>
             </NavigationMenuItem>
 
             <NavigationMenuItem>
               <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-                <Link href="/games">All Games</Link>
+                <Link href="/games" className="rounded-sm">All Games</Link>
               </NavigationMenuLink>
             </NavigationMenuItem>
 
             <NavigationMenuItem>
               <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-                <Link href="/games/favorites">Favorites</Link>
+                <Link href="/games/favorites" className="rounded-sm">Favorites</Link>
               </NavigationMenuLink>
             </NavigationMenuItem>
 

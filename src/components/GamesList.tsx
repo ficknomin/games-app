@@ -12,6 +12,8 @@ import { useGenres } from "@/hooks/useGenres";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { GenreFilter, PlatformFilter } from "@/lib/types";
 import { usePlatforms } from "@/hooks/usePlatforms";
+import { LoadingState } from "./states/LoadingState";
+import { ErrorState } from "./states/ErrorState";
 
 export type GamesListFilters = {
   search: string;
@@ -42,23 +44,19 @@ const GamesList = () => {
     console.log(filters.platform);
   }
 
-  const { isLoading: isGamesLoading, isError: isGamesError, data: gamesData, error: gamesError } = useGames(filters);
-  const { isLoading: isGenresLoading, isError: isGenresError, data: genresData, error: genresError } = useGenres();
-  const { isLoading: isPlatformsLoading, isError: isPlatformsError, data: platformsData, error: platformsError } = usePlatforms();
+  const { isLoading: isGamesLoading, isError: isGamesError, data: gamesData, error: gamesError, refetch: refetchGames } = useGames(filters);
+  const { isLoading: isGenresLoading, isError: isGenresError, data: genresData, error: genresError, refetch: refetchGenres } = useGenres();
+  const { isLoading: isPlatformsLoading, isError: isPlatformsError, data: platformsData, error: platformsError, refetch: refetchPlatforms } = usePlatforms();
 
   if (isGamesLoading) {
     return (
-      <div className="flex justify-center py-28">
-        <Spinner className="animate-spin" />
-      </div>
+      <LoadingState />
     );
   }
 
   if (isGamesError) {
     return (
-      <div className="text-xl text-destructive text-center py-20">
-        {`Error loading the games: ${gamesError?.message}`}
-      </div>
+      <ErrorState message={gamesError?.message} onRetry={refetchGames} />
     );
   }
 
@@ -163,7 +161,7 @@ const GamesList = () => {
             <PaginationPrevious onClick={() =>
               gamesData?.previous &&
               setFilters((prev) => ({ ...prev, page: prev.page - 1 }))
-            } className={!gamesData?.previous ? "pointer-events-none opacity-50" : "cursor-pointer"} />
+            } className={!gamesData?.previous ? "pointer-events-none opacity-50 rounded-sm" : "cursor-pointer rounded-sm"} />
           </PaginationItem>
           <PaginationItem>
             <span className="px-4 text-sm text-muted-foreground">
@@ -176,7 +174,7 @@ const GamesList = () => {
                 gamesData?.next &&
                 setFilters((prev) => ({ ...prev, page: prev.page + 1 }))
               }
-              className={!gamesData?.next ? "pointer-events-none opacity-50" : "cursor-pointer"}
+              className={!gamesData?.next ? "pointer-events-none opacity-50 rounded-sm" : "cursor-pointer rounded-sm"}
             />
           </PaginationItem>
         </PaginationContent>
