@@ -1,4 +1,4 @@
-import { GamesListFilters } from "@/components/GamesList";
+import { FilterTypes, GamesListFilters } from "@/components/GamesList";
 import { Game, GamesResponse } from "../lib/types";
 import { supabase } from "@/db/client";
 
@@ -22,6 +22,23 @@ export const fetchGames = async (filters: GamesListFilters): Promise<GamesRespon
 
   if (filters.platform) {
     query = query.contains("platforms", [filters.platform]);
+  }
+
+  if (filters.filter !== '') {
+    switch (filters.filter) {
+      case FilterTypes.RATINGASC:
+        query = query.order('rating', { ascending: true });
+        break;
+      case FilterTypes.RATINGDESC:
+        query = query.order('rating', { ascending: false });
+        break;
+      case FilterTypes.YEARASC:
+        query = query.order('released', { ascending: true });
+        break;
+      case FilterTypes.YEARDESC:
+        query = query.order('released', { ascending: false });
+        break;
+    }
   }
 
   const { data, error, count } = await query;

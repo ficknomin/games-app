@@ -9,24 +9,33 @@ import { Controller, useForm } from "react-hook-form";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { useGenres } from "@/hooks/useGenres";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { GenreFilter, PlatformFilter } from "@/lib/types";
 import { usePlatforms } from "@/hooks/usePlatforms";
 import { LoadingState } from "./states/LoadingState";
 import { ErrorState } from "./states/ErrorState";
 
+export enum FilterTypes {
+  RATINGASC = "RATINGASC",
+  RATINGDESC = "RATINGDESC",
+  YEARASC = "YEARASC",
+  YEARDESC = "YEARDESC",
+}
+
 export type GamesListFilters = {
   search: string;
   genre: string;
   platform: string;
+  filter: FilterTypes | '';
   page: number;
 }
 
 const GamesList = () => {
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState<GamesListFilters>({
     search: '',
     genre: '',
     platform: '',
+    filter: '',
     page: 1,
   });
 
@@ -35,6 +44,7 @@ const GamesList = () => {
       search: '',
       genre: '',
       platform: '',
+      filter: '',
       page: 1,
     }
   });
@@ -125,6 +135,45 @@ const GamesList = () => {
                           {platform.label}
                         </SelectItem>
                       ))
+                    )}
+                  </SelectContent>
+                </Select>
+              )}
+            />
+
+            <Controller
+              control={control}
+              name="filter"
+              render={({ field }) => (
+                <Select onValueChange={field.onChange} value={field.value || ""}>
+                  <SelectTrigger className="w-full rounded-sm">
+                    <SelectValue placeholder="Select order filter" />
+                  </SelectTrigger>
+
+                  <SelectContent>
+                    {isPlatformsLoading ? (
+                      <SelectItem value="loading" disabled>
+                        Loading...
+                      </SelectItem>
+                    ) : isPlatformsError ? (
+                      <SelectItem value="error" disabled>
+                        Error loading
+                      </SelectItem>
+                    ) : (
+                      <SelectGroup>
+                        <SelectItem key={FilterTypes.RATINGASC} value={FilterTypes.RATINGASC}>
+                          Rating Ascending
+                        </SelectItem>
+                        <SelectItem key={FilterTypes.RATINGDESC} value={FilterTypes.RATINGDESC}>
+                          Rating Descending
+                        </SelectItem>
+                        <SelectItem key={FilterTypes.YEARASC} value={FilterTypes.YEARASC}>
+                          Release Date Ascending
+                        </SelectItem>
+                        <SelectItem key={FilterTypes.YEARDESC} value={FilterTypes.YEARDESC}>
+                          Release Date Descending
+                        </SelectItem>
+                      </SelectGroup>
                     )}
                   </SelectContent>
                 </Select>
