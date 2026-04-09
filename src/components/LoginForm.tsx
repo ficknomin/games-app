@@ -9,11 +9,12 @@ import { Button } from "./ui/button";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { useEffect } from "react";
+import { toast } from "sonner";
 
 type LoginFormData = {
   email: string;
   password: string;
-}
+};
 
 export const LoginForm = () => {
   const { register, handleSubmit } = useForm<LoginFormData>();
@@ -21,7 +22,6 @@ export const LoginForm = () => {
   const router = useRouter();
 
   const { user } = useAuth();
-
 
   useEffect(() => {
     if (user) {
@@ -35,29 +35,42 @@ export const LoginForm = () => {
       router.push("/games");
     } catch (error: unknown) {
       if (error instanceof AuthError) {
-        alert(error.message);
+        toast.error(error.message);
       } else {
-        alert("An unexpected error happened!");
+        toast.error("An unexpected error happened!");
       }
     }
-  }
-
+  };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
       <FieldGroup>
         <Field>
           <FieldLabel htmlFor="fieldgroup-email">Email</FieldLabel>
-          <Input id="fieldgroup-email" type="email" className="rounded-sm" placeholder="Enter your email" {...register("email")} />
+          <Input
+            id="fieldgroup-email"
+            type="email"
+            className="rounded-sm"
+            placeholder="Enter your email"
+            {...register("email")}
+          />
         </Field>
         <Field>
           <FieldLabel htmlFor="fieldgroup-password">Password</FieldLabel>
-          <Input id="fieldgroup-password" type="password" className="rounded-sm" placeholder="Enter a password" {...register("password")} />
+          <Input
+            id="fieldgroup-password"
+            type="password"
+            className="rounded-sm"
+            placeholder="Enter a password"
+            {...register("password")}
+          />
         </Field>
         <Field className="pt-2">
-          <Button type="submit" className="w-full rounded-sm">Sign In</Button>
+          <Button type="submit" className="w-full rounded-sm">
+            Sign In
+          </Button>
         </Field>
       </FieldGroup>
     </form>
-  )
-}
+  );
+};

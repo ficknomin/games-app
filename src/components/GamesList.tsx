@@ -3,13 +3,26 @@
 import { useGames } from "@/hooks/useGames";
 import { Spinner } from "./ui/spinner";
 import { useState } from "react";
-import { Pagination, PaginationContent, PaginationItem, PaginationNext, PaginationPrevious } from "./ui/pagination";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationNext,
+  PaginationPrevious,
+} from "./ui/pagination";
 import GameCard from "./GameCard";
 import { Controller, useForm } from "react-hook-form";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { useGenres } from "@/hooks/useGenres";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
 import { GenreFilter, PlatformFilter } from "@/lib/types";
 import { usePlatforms } from "@/hooks/usePlatforms";
 import { LoadingState } from "./states/LoadingState";
@@ -26,66 +39,92 @@ export type GamesListFilters = {
   search: string;
   genre: string;
   platform: string;
-  filter: FilterTypes | '';
+  filter: FilterTypes | "";
   page: number;
-}
+};
 
 const GamesList = () => {
   const [filters, setFilters] = useState<GamesListFilters>({
-    search: '',
-    genre: '',
-    platform: '',
-    filter: '',
+    search: "",
+    genre: "",
+    platform: "",
+    filter: "",
     page: 1,
   });
 
-  const { register, handleSubmit, formState: { errors, isSubmitting }, control } = useForm<GamesListFilters>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    control,
+  } = useForm<GamesListFilters>({
     defaultValues: {
-      search: '',
-      genre: '',
-      platform: '',
-      filter: '',
+      search: "",
+      genre: "",
+      platform: "",
+      filter: "",
       page: 1,
-    }
+    },
   });
 
   const onSubmit = (filters: GamesListFilters) => {
     setFilters({ ...filters, page: 1 });
     console.log(filters.platform);
-  }
+  };
 
-  const { isLoading: isGamesLoading, isError: isGamesError, data: gamesData, error: gamesError, refetch: refetchGames } = useGames(filters);
-  const { isLoading: isGenresLoading, isError: isGenresError, data: genresData, error: genresError, refetch: refetchGenres } = useGenres();
-  const { isLoading: isPlatformsLoading, isError: isPlatformsError, data: platformsData, error: platformsError, refetch: refetchPlatforms } = usePlatforms();
+  const {
+    isLoading: isGamesLoading,
+    isError: isGamesError,
+    data: gamesData,
+    error: gamesError,
+    refetch: refetchGames,
+  } = useGames(filters);
+  const {
+    isLoading: isGenresLoading,
+    isError: isGenresError,
+    data: genresData,
+    error: genresError,
+    refetch: refetchGenres,
+  } = useGenres();
+  const {
+    isLoading: isPlatformsLoading,
+    isError: isPlatformsError,
+    data: platformsData,
+    error: platformsError,
+    refetch: refetchPlatforms,
+  } = usePlatforms();
 
   if (isGamesLoading) {
-    return (
-      <LoadingState />
-    );
+    return <LoadingState />;
   }
 
   if (isGamesError) {
-    return (
-      <ErrorState message={gamesError?.message} onRetry={refetchGames} />
-    );
+    return <ErrorState message={gamesError?.message} onRetry={refetchGames} />;
   }
 
-  console.log(gamesData);
-
   return (
-
     <div className="w-full max-w-6xl mx-auto">
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-
         <div className="col-span-full p-3 bg-card rounded-sm shadow-md">
-          <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col items-left gap-4">
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="flex flex-col items-left gap-4"
+          >
             <h1 className="text-lg mx-2 font-bold">Search Games</h1>
-            <Input type="text" placeholder="Search games..." {...register("search")} className="w-full rounded-sm" />
+            <Input
+              type="text"
+              placeholder="Search games..."
+              {...register("search")}
+              className="w-full rounded-sm"
+            />
             <Controller
               control={control}
               name="genre"
               render={({ field }) => (
-                <Select onValueChange={field.onChange} value={field.value || ""}>
+                <Select
+                  onValueChange={field.onChange}
+                  value={field.value || ""}
+                >
                   <SelectTrigger className="w-full rounded-sm">
                     <SelectValue placeholder="Select genre" />
                   </SelectTrigger>
@@ -115,7 +154,10 @@ const GamesList = () => {
               control={control}
               name="platform"
               render={({ field }) => (
-                <Select onValueChange={field.onChange} value={field.value || ""}>
+                <Select
+                  onValueChange={field.onChange}
+                  value={field.value || ""}
+                >
                   <SelectTrigger className="w-full rounded-sm">
                     <SelectValue placeholder="Select platform" />
                   </SelectTrigger>
@@ -145,7 +187,10 @@ const GamesList = () => {
               control={control}
               name="filter"
               render={({ field }) => (
-                <Select onValueChange={field.onChange} value={field.value || ""}>
+                <Select
+                  onValueChange={field.onChange}
+                  value={field.value || ""}
+                >
                   <SelectTrigger className="w-full rounded-sm">
                     <SelectValue placeholder="Select order filter" />
                   </SelectTrigger>
@@ -161,16 +206,28 @@ const GamesList = () => {
                       </SelectItem>
                     ) : (
                       <SelectGroup>
-                        <SelectItem key={FilterTypes.RATINGASC} value={FilterTypes.RATINGASC}>
+                        <SelectItem
+                          key={FilterTypes.RATINGASC}
+                          value={FilterTypes.RATINGASC}
+                        >
                           Rating Ascending
                         </SelectItem>
-                        <SelectItem key={FilterTypes.RATINGDESC} value={FilterTypes.RATINGDESC}>
+                        <SelectItem
+                          key={FilterTypes.RATINGDESC}
+                          value={FilterTypes.RATINGDESC}
+                        >
                           Rating Descending
                         </SelectItem>
-                        <SelectItem key={FilterTypes.YEARASC} value={FilterTypes.YEARASC}>
+                        <SelectItem
+                          key={FilterTypes.YEARASC}
+                          value={FilterTypes.YEARASC}
+                        >
                           Release Date Ascending
                         </SelectItem>
-                        <SelectItem key={FilterTypes.YEARDESC} value={FilterTypes.YEARDESC}>
+                        <SelectItem
+                          key={FilterTypes.YEARDESC}
+                          value={FilterTypes.YEARDESC}
+                        >
                           Release Date Descending
                         </SelectItem>
                       </SelectGroup>
@@ -180,7 +237,15 @@ const GamesList = () => {
               )}
             />
 
-            <Button type="submit" className={isSubmitting ? "cursor-not-allowed opacity-50 rounded-sm" : "cursor-pointer rounded-sm"} disabled={isSubmitting}>
+            <Button
+              type="submit"
+              className={
+                isSubmitting
+                  ? "cursor-not-allowed opacity-50 rounded-sm"
+                  : "cursor-pointer rounded-sm"
+              }
+              disabled={isSubmitting}
+            >
               {isSubmitting ? "Searching..." : "Search"}
             </Button>
           </form>
@@ -196,21 +261,26 @@ const GamesList = () => {
           ))
         )}
 
-        {gamesData?.results.length === 0 &&
+        {gamesData?.results.length === 0 && (
           <div className="col-span-full text-center text-lg text-muted-foreground pt-12 pb-8">
             No games found matching your criteria.
           </div>
-        }
-
-
+        )}
       </div>
       <Pagination className="flex justify-center mt-16">
         <PaginationContent>
           <PaginationItem>
-            <PaginationPrevious onClick={() =>
-              gamesData?.previous &&
-              setFilters((prev) => ({ ...prev, page: prev.page - 1 }))
-            } className={!gamesData?.previous ? "pointer-events-none opacity-50 rounded-sm" : "cursor-pointer rounded-sm"} />
+            <PaginationPrevious
+              onClick={() =>
+                gamesData?.previous &&
+                setFilters((prev) => ({ ...prev, page: prev.page - 1 }))
+              }
+              className={
+                !gamesData?.previous
+                  ? "pointer-events-none opacity-50 rounded-sm"
+                  : "cursor-pointer rounded-sm"
+              }
+            />
           </PaginationItem>
           <PaginationItem>
             <span className="px-4 text-sm text-muted-foreground">
@@ -223,14 +293,17 @@ const GamesList = () => {
                 gamesData?.next &&
                 setFilters((prev) => ({ ...prev, page: prev.page + 1 }))
               }
-              className={!gamesData?.next ? "pointer-events-none opacity-50 rounded-sm" : "cursor-pointer rounded-sm"}
+              className={
+                !gamesData?.next
+                  ? "pointer-events-none opacity-50 rounded-sm"
+                  : "cursor-pointer rounded-sm"
+              }
             />
           </PaginationItem>
         </PaginationContent>
       </Pagination>
-
     </div>
-  )
-}
+  );
+};
 
 export default GamesList;

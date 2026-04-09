@@ -1,4 +1,10 @@
+import { Metadata } from "next";
 import HomePage from "./HomePage";
+
+export const metadata: Metadata = {
+  title: "Games Hub",
+  description: "A video games collection hub to research and favorite games",
+};
 
 const Home = () => {
   return (
@@ -6,6 +12,6 @@ const Home = () => {
       <HomePage />
     </div>
   );
-}
+};
 
 export default Home;

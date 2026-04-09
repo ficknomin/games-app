@@ -1,4 +1,13 @@
 import NavBar from "@/components/NavBar";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: {
+    default: "Games",
+    template: "%s | Games",
+  },
+  description: "Games collection with 1000+ games for all platforms",
+};
 
 export default function Layout({
   children,
