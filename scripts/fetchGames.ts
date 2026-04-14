@@ -1,13 +1,13 @@
 import "dotenv/config";
-import { supabase } from "../src/db/server";
-import { Game, Genre, Platform } from "@/lib/types";
+import { supabase } from "../src/config/env/env.server";
+import { Game } from "@/app/entities/models/game.model";
 
 const PAGE_SIZE = 10;
 const MAX_PAGES = 20;
 
 const fetchGames = async (page: number) => {
   const res = await fetch(
-    `https://api.rawg.io/api/games?key=${process.env.NEXT_PUBLIC_RAWG_API_KEY}&page=${page}&page_size=${PAGE_SIZE}`
+    `https://api.rawg.io/api/games?key=${process.env.NEXT_PUBLIC_RAWG_API_KEY}&page=${page}&page_size=${PAGE_SIZE}`,
   );
 
   if (!res.ok) throw new Error("Failed to fetch RAWG");
@@ -25,7 +25,6 @@ const transformGameData = (game: Game) => ({
 
   genres: game.genres?.map((g) => g) || [],
   platforms: game.platforms?.map((p) => p) || [],
-
 });
 
 const uploadGames = async () => {
@@ -48,6 +47,6 @@ const uploadGames = async () => {
   }
 
   console.log("Data insertion completed.");
-}
+};
 
 uploadGames();
