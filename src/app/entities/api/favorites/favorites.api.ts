@@ -1,60 +1,58 @@
-import { supabase } from "@/config/env/env.client";
+"use server";
+
+import { createClient } from "@/config/env/env.server";
 import { FavoriteGame } from "@/app/entities/models/favorite.model";
+import { getSessionUserId } from "@/app/features/auth/auth.service";
 
 export const fetchFavoritesDB = async () => {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const userId = await getSessionUserId();
+  if (!userId) return [];
 
-  if (!user) return;
-
-  const { data, error } = await supabase.from("favorites").select("game_id");
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("favorites")
+    .select("game_id")
+    .eq("user_id", userId);
 
   if (error) throw error;
-
   return data;
 };
 
 export const addFavoriteDB = async (gameId: number) => {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const userId = await getSessionUserId();
+  if (!userId) return;
 
-  if (!user) return; // if I throw an error instead of returning, the component re-renders and breaks UI logic
-
-  const { error } = await supabase.from("favorites").insert({
-    user_id: user.id,
-    game_id: gameId,
-  });
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("favorites")
+    .insert({ user_id: userId, game_id: gameId });
 
   if (error) throw error;
 };
 
 export const removeFavoriteDB = async (gameId: number) => {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const userId = await getSessionUserId();
+  if (!userId) return;
 
-  if (!user) return;
-
+  const supabase = await createClient();
   const { error } = await supabase
     .from("favorites")
     .delete()
+    .eq("user_id", userId)
     .eq("game_id", gameId);
 
   if (error) throw error;
 };
 
 export const syncFavoritesOnLogin = async (localFavorites: FavoriteGame[]) => {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const userId = await getSessionUserId();
+  if (!userId) return [];
 
-  if (!user) return [];
-
+  const supabase = await createClient();
   const { data: dbFavorites, error } = await supabase
     .from("favorites")
-    .select("game_id");
+    .select("game_id")
+    .eq("user_id", userId);
 
   if (error) throw error;
 
@@ -63,22 +61,14 @@ export const syncFavoritesOnLogin = async (localFavorites: FavoriteGame[]) => {
 
   const toInsert = localFavorites
     .filter((f) => !dbIds.has(f.id))
-    .map((f) => ({
-      user_id: user.id,
-      game_id: f.id,
-    }));
+    .map((f) => ({ user_id: userId, game_id: f.id }));
 
   if (toInsert.length > 0) {
     const { error: insertError } = await supabase
       .from("favorites")
       .insert(toInsert);
-
-    if (insertError) {
-      throw insertError;
-    }
+    if (insertError) throw insertError;
   }
 
-  const mergedIds = new Set([...dbIds, ...localIds]);
-
-  return Array.from(mergedIds);
+  return Array.from(new Set([...dbIds, ...localIds]));
 };

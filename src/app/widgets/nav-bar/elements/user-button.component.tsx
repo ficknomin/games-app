@@ -12,11 +12,10 @@ import {
 } from "@/app/shared/ui/dropdown-menu";
 import { UserIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useAuthActions } from "@/app/features/auth";
+import { signOut } from "@/app/features/auth";
 
 export const UserButton = () => {
   const { user } = useAuth();
-  const { signOut } = useAuthActions();
   const router = useRouter();
 
   return (

@@ -1,5 +1,7 @@
 import { GamesList } from "@/app/modules/games-list";
 
+export const revalidate = 3600;
+
 const GamesPage = () => {
   return (
     <div className="min-h-screen bg-background">

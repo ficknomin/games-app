@@ -1,76 +1,106 @@
 "use client";
 
-import { useAuthActions } from "@/app/features/auth/auth.service";
-import { AuthError } from "@supabase/supabase-js";
-import { useForm } from "react-hook-form";
-import { Field, FieldGroup, FieldLabel } from "@/app/shared/ui/field";
-import { Input } from "@/app/shared/ui/input";
-import { Button } from "@/app/shared/ui/button";
-import { useRouter } from "next/navigation";
-import { useAuth } from "@/app/shared/hooks/use-auth.hook";
-import { useEffect } from "react";
-import { toast } from "sonner";
+import { useState } from "react";
 
-type LoginFormData = {
-  email: string;
-  password: string;
-};
+import { EyeIcon, EyeOffIcon } from "lucide-react";
+
+import { Button } from "@/app/shared/ui/button";
+import { Checkbox } from "@/app/shared/ui/checkbox";
+import { Input } from "@/app/shared/ui/input";
+import { Label } from "@/app/shared/ui/label";
+import { useForm } from "react-hook-form";
+import { LoginFormData, loginSchema } from "./auth.schema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import { signIn } from "./auth.service";
 
 export const LoginForm = () => {
-  const { register, handleSubmit } = useForm<LoginFormData>();
-  const { signIn } = useAuthActions();
   const router = useRouter();
-
-  const { user } = useAuth();
-
-  useEffect(() => {
-    if (user) {
-      router.replace("/games");
-    }
-  }, [user, router]);
+  const [isVisible, setIsVisible] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
 
   const onSubmit = async (data: LoginFormData) => {
     try {
-      await signIn(data.email, data.password);
-      router.push("/games");
-    } catch (error: unknown) {
-      if (error instanceof AuthError) {
-        toast.error(error.message);
-      } else {
-        toast.error("An unexpected error happened!");
+      const response = await signIn(data);
+
+      if (response.success) {
+        router.push("/games");
       }
+    } catch (error) {
+      console.error("Registration failed:", error);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-      <FieldGroup>
-        <Field>
-          <FieldLabel htmlFor="fieldgroup-email">Email</FieldLabel>
+    <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
+      {/* Email */}
+      <div className="space-y-1">
+        <Label htmlFor="userEmail" className="leading-5">
+          Email address*
+        </Label>
+        <Input
+          type="email"
+          id="userEmail"
+          placeholder="Enter your email address"
+          {...register("email")}
+        />
+      </div>
+
+      {/* Password */}
+      <div className="w-full space-y-1">
+        <Label htmlFor="password" className="leading-5">
+          Password*
+        </Label>
+        <div className="relative">
           <Input
-            id="fieldgroup-email"
-            type="email"
-            className="rounded-sm"
-            placeholder="Enter your email"
-            {...register("email")}
-          />
-        </Field>
-        <Field>
-          <FieldLabel htmlFor="fieldgroup-password">Password</FieldLabel>
-          <Input
-            id="fieldgroup-password"
-            type="password"
-            className="rounded-sm"
-            placeholder="Enter a password"
+            id="password"
+            type={isVisible ? "text" : "password"}
+            placeholder="••••••••••••••••"
+            className="pr-9"
             {...register("password")}
           />
-        </Field>
-        <Field className="pt-2">
-          <Button type="submit" className="w-full rounded-sm">
-            Sign In
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setIsVisible((prevState) => !prevState)}
+            className="text-muted-foreground focus-visible:ring-ring/50 absolute inset-y-0 right-0 rounded-l-none hover:bg-transparent"
+          >
+            {isVisible ? <EyeOffIcon /> : <EyeIcon />}
+            <span className="sr-only">
+              {isVisible ? "Hide password" : "Show password"}
+            </span>
           </Button>
-        </Field>
-      </FieldGroup>
+        </div>
+      </div>
+
+      {/* Remember Me and Forgot Password */}
+      <div className="flex items-center justify-between gap-y-2">
+        <div className="flex items-center gap-3">
+          <Checkbox id="rememberMe" className="size-6" />
+          <Label htmlFor="rememberMe" className="text-muted-foreground">
+            {" "}
+            Remember Me
+          </Label>
+        </div>
+
+        <a href="#" className="hover:underline">
+          Forgot Password?
+        </a>
+      </div>
+
+      <Button className="w-full" type="submit">
+        Sign in
+      </Button>
     </form>
   );
 };

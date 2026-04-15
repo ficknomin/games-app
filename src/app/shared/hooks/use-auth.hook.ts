@@ -1,20 +1,20 @@
-import { supabase } from "@/config/env/env.client";
-import { User } from "@supabase/supabase-js";
+"use client";
+
 import { useEffect, useState } from "react";
 
+export type SessionUser = {
+  id: string;
+  email: string;
+  username: string;
+};
+
 export const useAuth = () => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<SessionUser | null>(null);
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      setUser(data.user);
-    });
-
-    const { data: listener } = supabase.auth.onAuthStateChange((_, session) => {
-      setUser(session?.user ?? null);
-    });
-
-    return () => listener.subscription.unsubscribe();
+    fetch("/api/auth/me")
+      .then((res) => res.json())
+      .then(setUser);
   }, []);
 
   return { user };

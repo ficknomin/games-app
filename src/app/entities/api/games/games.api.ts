@@ -3,7 +3,7 @@ import {
   GamesListFilters,
 } from "@/app/modules/games-list/games-list.module";
 import { Game, GamesResponse } from "@/app/entities/models/game.model";
-import { supabase } from "@/config/env/env.client";
+import { createClient } from "@/config/env/env.client";
 
 export const fetchGames = async (
   filters: GamesListFilters,
@@ -11,6 +11,7 @@ export const fetchGames = async (
   const PAGE_SIZE = 10;
   const from = (filters.page - 1) * PAGE_SIZE;
   const to = from + PAGE_SIZE - 1;
+  const supabase = createClient();
 
   let query = supabase
     .from("games")
@@ -61,6 +62,8 @@ export const fetchGames = async (
 };
 
 export const fetchGame = async (id: string): Promise<Game> => {
+  const supabase = createClient();
+
   const query = supabase.from("games").select("*").eq("id", id);
 
   const { data, error } = await query;
