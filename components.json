@@ -5,7 +5,7 @@
   "tsx": true,
   "tailwind": {
     "config": "",
-    "css": "src/app/globals.css",
+    "css": "src/config/styles/globals.css",
     "baseColor": "olive",
     "cssVariables": true,
     "prefix": ""
@@ -13,11 +13,11 @@
   "iconLibrary": "lucide",
   "rtl": false,
   "aliases": {
-    "components": "@/components",
-    "utils": "@/lib/utils",
-    "ui": "@/components/ui",
-    "lib": "@/lib",
-    "hooks": "@/hooks"
+    "components": "@/app/shared",
+    "ui": "@/app/shared/ui",
+    "utils": "@/app/shared/interfaces/utils",
+    "lib": "@/app/shared/interfaces",
+    "hooks": "@/app/shared/hooks"
   },
   "menuColor": "default",
   "menuAccent": "subtle",

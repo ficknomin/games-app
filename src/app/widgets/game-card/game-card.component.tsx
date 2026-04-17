@@ -14,14 +14,18 @@ import { ArrowRight, Heart } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useToggleFavorites } from "@/app/features/toggle-favorite";
 import { useFavoritesStore } from "@/app/shared/hooks";
+import { useTranslations } from "next-intl";
+import { useState } from "react";
 
 export const GameCard = ({ game }: { game: Game | FavoriteGame }) => {
+  const t = useTranslations("games");
   const router = useRouter();
   const favorite = useFavoritesStore((s) => !!s.favorites[game.id]);
   const toggleFavorite = useToggleFavorites().toggleFavorite;
 
   return (
     <Card
+      data-testid="game-card"
       onClick={() => router.push(`/games/${game.id}`)}
       className="group p-0 rounded-sm overflow-hidden bg-card shadow-md hover:shadow-lg transition-shadow cursor-pointer"
     >
@@ -36,17 +40,22 @@ export const GameCard = ({ game }: { game: Game | FavoriteGame }) => {
       </div>
 
       <CardHeader className="p-3">
-        <CardTitle className="text-sm text-left line-clamp-2">
+        <CardTitle
+          data-testid="game-card-title"
+          className="text-sm text-left line-clamp-2"
+        >
           {game.name}
         </CardTitle>
         <CardDescription className="text-xs text-left text-muted-foreground">
-          {game.released ? game.released.split("-")[0] : "TBA"}
+          {game.released ? game.released.split("-")[0] : t("tba")}
         </CardDescription>
       </CardHeader>
 
       <CardContent className="px-3 pb-3 flex justify-between">
         <Button
           variant={"ghost"}
+          data-testid="favorite-button"
+          data-favorited={favorite}
           className="opacity-100 hover:!bg-transparent group-hover:opacity-100 md:opacity-0 transition-opacity duration-300 cursor-pointer"
           onClick={(e) => {
             e.stopPropagation();

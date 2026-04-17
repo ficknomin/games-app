@@ -5,12 +5,14 @@ import Image from "next/image";
 import { Badge } from "@/app/shared/ui/badge";
 import { LoadingState } from "@/app/shared/ui/loading-state";
 import { ErrorState } from "@/app/shared/ui/error-state";
+import { useTranslations } from "next-intl";
 
 type GameDetailsProps = {
   id: string;
 };
 
 export const GameDetails = ({ id }: GameDetailsProps) => {
+  const t = useTranslations("games");
   const { isLoading, isError, data, error, refetch } = useGame(id);
 
   if (isLoading) {
@@ -43,7 +45,7 @@ export const GameDetails = ({ id }: GameDetailsProps) => {
                 {data.metacritic}
               </span>
               <span className="text-[10px] text-muted-foreground mt-0.5">
-                Metacritic
+                {t("metacritic")}
               </span>
             </div>
           )}
@@ -52,10 +54,15 @@ export const GameDetails = ({ id }: GameDetailsProps) => {
         <div className="px-6 pb-6 -mt-8 relative">
           <div className="flex items-end justify-between gap-4 flex-wrap">
             <div>
-              <h1 className="text-2xl font-bold">{data.name}</h1>
+              <h1
+                data-testid="game-detail-title"
+                className="text-2xl font-bold"
+              >
+                {data.name}
+              </h1>
               <div className="flex items-center gap-2 mt-1 flex-wrap">
                 <span className="text-sm text-muted-foreground">
-                  {data.released ? data.released.split("-")[0] : "TBA"}
+                  {data.released ? data.released.split("-")[0] : t("tba")}
                 </span>
               </div>
             </div>

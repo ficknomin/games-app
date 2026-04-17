@@ -1,26 +1,30 @@
 import { fetchGame } from "@/app/entities/api/games";
 import { GameDetails } from "@/app/widgets/game-details";
 import { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 
 type GamePageProps = {
-  params: {
+  params: Promise<{
     id: string;
-  };
+    locale: string;
+  }>;
 };
 
 export async function generateMetadata({
   params,
 }: GamePageProps): Promise<Metadata> {
-  const { id } = await params;
+  const { id, locale } = await params;
+  const t = await getTranslations({ locale, namespace: "metadata" });
   const game = await fetchGame(id);
 
   if (!game) {
-    return { title: "Game not found" };
+    return { title: t("gameNotFound") };
   }
 
   return {
     title: game.name,
-    description: `Games Hub. Game description for game: ${game.name}`,
+    description: t("gameDescription", { name: game.name }),
     openGraph: {
       title: game.name,
       images: game.background_image ? [game.background_image] : [],
@@ -30,6 +34,11 @@ export async function generateMetadata({
 
 const GamePage = async ({ params }: GamePageProps) => {
   const { id } = await params;
+
+  const game = await fetchGame(id);
+  if (!game) {
+    notFound();
+  }
 
   return (
     <div className="flex flex-col mt-12 flex-1 items-center justify-center bg-background px-4">

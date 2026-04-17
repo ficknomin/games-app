@@ -1,6 +1,6 @@
 "use server";
 
-import { createClient } from "@/config/env/env.server";
+import { createClient } from "@/config/db/env.server";
 import { FavoriteGame } from "@/app/entities/models/favorite.model";
 import { getSessionUserId } from "@/app/features/auth/auth.service";
 

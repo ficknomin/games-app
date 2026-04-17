@@ -1,34 +1,23 @@
-import { createClient } from "@/config/env/env.server";
-import { cookies } from "next/headers";
-import { NextResponse } from "next/server";
-import crypto from "crypto";
+import { NextRequest, NextResponse } from "next/server";
+import { verifyAccessToken } from "@/app/shared/lib/jwt/verify";
 
-export async function GET() {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("session_token")?.value;
+export async function GET(req: NextRequest) {
+  const authHeader = req.headers.get("authorization");
+  const token = authHeader?.startsWith("Bearer ") ? authHeader.slice(7) : null;
 
   if (!token) {
-    return NextResponse.json(null);
+    return NextResponse.json(null, { status: 401 });
   }
 
-  const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
-  const supabase = await createClient();
+  const payload = await verifyAccessToken(token);
 
-  const { data: session } = await supabase
-    .from("sessions")
-    .select("user_id, expires_at")
-    .eq("token_hash", tokenHash)
-    .single();
-
-  if (!session || new Date(session.expires_at) < new Date()) {
-    return NextResponse.json(null);
+  if (!payload) {
+    return NextResponse.json(null, { status: 401 });
   }
 
-  const { data: user } = await supabase
-    .from("users")
-    .select("id, email, username")
-    .eq("id", session.user_id)
-    .single();
-
-  return NextResponse.json(user ?? null);
+  return NextResponse.json({
+    id: payload.userId,
+    email: payload.email,
+    username: payload.username,
+  });
 }

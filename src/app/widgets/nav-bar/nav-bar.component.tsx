@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import {
   NavigationMenu,
@@ -6,9 +8,12 @@ import {
   NavigationMenuList,
   navigationMenuTriggerStyle,
 } from "@/app/shared/ui/navigation-menu";
-import { UserButton } from "./elements";
+import { LocaleSwitcher, UserButton } from "./elements";
+import { useTranslations } from "next-intl";
 
 export const NavBar = () => {
+  const t = useTranslations("nav");
+
   return (
     <div className="w-full border-b bg-background">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
@@ -20,7 +25,7 @@ export const NavBar = () => {
                 className={navigationMenuTriggerStyle()}
               >
                 <Link href="/" className="rounded-sm">
-                  Home
+                  {t("home")}
                 </Link>
               </NavigationMenuLink>
             </NavigationMenuItem>
@@ -31,7 +36,7 @@ export const NavBar = () => {
                 className={navigationMenuTriggerStyle()}
               >
                 <Link href="/games" className="rounded-sm">
-                  All Games
+                  {t("allGames")}
                 </Link>
               </NavigationMenuLink>
             </NavigationMenuItem>
@@ -41,15 +46,22 @@ export const NavBar = () => {
                 asChild
                 className={navigationMenuTriggerStyle()}
               >
-                <Link href="/games/favorites" className="rounded-sm">
-                  Favorites
+                <Link
+                  data-testid="nav-favorites-link"
+                  href="/games/favorites"
+                  className="rounded-sm"
+                >
+                  {t("favorites")}
                 </Link>
               </NavigationMenuLink>
             </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
 
-        <UserButton />
+        <div className="flex items-center gap-2">
+          <LocaleSwitcher />
+          <UserButton />
+        </div>
       </div>
     </div>
   );

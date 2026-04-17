@@ -1,6 +1,6 @@
 "use client";
 
-import { useAuth } from "@/app/shared/hooks";
+import { useSessionStore } from "@/app/entities/session";
 import { Button } from "@/app/shared/ui/button";
 import {
   DropdownMenu,
@@ -13,9 +13,11 @@ import {
 import { UserIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { signOut } from "@/app/features/auth";
+import { useTranslations } from "next-intl";
 
 export const UserButton = () => {
-  const { user } = useAuth();
+  const t = useTranslations("userMenu");
+  const user = useSessionStore((s) => s.user);
   const router = useRouter();
 
   return (
@@ -27,7 +29,7 @@ export const UserButton = () => {
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-40 rounded-xs" align="start">
         <DropdownMenuGroup>
-          <DropdownMenuLabel>My Account</DropdownMenuLabel>
+          <DropdownMenuLabel>{t("myAccount")}</DropdownMenuLabel>
           {user ? (
             <>
               <DropdownMenuItem
@@ -37,7 +39,7 @@ export const UserButton = () => {
                 }}
                 className="hover:cursor-pointer"
               >
-                Sign out
+                {t("signOut")}
               </DropdownMenuItem>
             </>
           ) : (
@@ -46,13 +48,13 @@ export const UserButton = () => {
                 onClick={() => router.push("/login")}
                 className="hover:cursor-pointer"
               >
-                Sign in
+                {t("signIn")}
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => router.push("/register")}
                 className="hover:cursor-pointer"
               >
-                Sign up
+                {t("signUp")}
               </DropdownMenuItem>
             </>
           )}

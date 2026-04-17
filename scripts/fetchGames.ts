@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { supabase } from "../src/config/env/env.server";
+import { supabase } from "../src/config/db/env.server";
 import { Game } from "@/app/entities/models/game.model";
 
 const PAGE_SIZE = 10;

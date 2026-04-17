@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 
@@ -10,16 +10,29 @@ import { Input } from "@/app/shared/ui/input";
 import { Label } from "@/app/shared/ui/label";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { RegisterFormData, registerSchema } from "./auth.schema";
+import { createRegisterSchema, RegisterFormData } from "./auth.schema";
 import { cn } from "@/app/shared/interfaces/utils";
 import { signUp } from "@/app/features/auth";
+import { useSessionStore } from "@/app/entities/session";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { toast } from "sonner";
 
 export const RegisterForm = () => {
+  const t = useTranslations("register");
+  const tValidation = useTranslations("validation");
+  const tAuthErrors = useTranslations("authErrors");
+
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] =
     useState(false);
   const router = useRouter();
+  const { setSession } = useSessionStore();
+
+  const schema = useMemo(
+    () => createRegisterSchema(tValidation),
+    [tValidation],
+  );
 
   const {
     register,
@@ -27,7 +40,7 @@ export const RegisterForm = () => {
     control,
     formState: { errors, isSubmitting },
   } = useForm<RegisterFormData>({
-    resolver: zodResolver(registerSchema),
+    resolver: zodResolver(schema),
     defaultValues: {
       username: "",
       email: "",
@@ -38,15 +51,15 @@ export const RegisterForm = () => {
   });
 
   const onSubmit = async (data: RegisterFormData) => {
-    try {
-      const response = await signUp(data);
+    const response = await signUp(data);
 
-      if (response.success) {
-        router.push("/games");
-      }
-    } catch (error) {
-      console.error("Registration failed:", error);
+    if (response.success) {
+      setSession(response.data.accessToken, response.data.user);
+      router.push("/games");
+      return;
     }
+
+    toast.error(tAuthErrors(response.code));
   };
 
   return (
@@ -54,12 +67,13 @@ export const RegisterForm = () => {
       {/* Username */}
       <div className="space-y-1">
         <Label className="leading-5" htmlFor="username">
-          Username*
+          {t("usernameLabel")}
         </Label>
         <Input
           type="text"
           id="username"
-          placeholder="Enter your username"
+          placeholder={t("usernamePlaceholder")}
+          className="rounded-sm"
           {...register("username")}
         />
         {errors.username && (
@@ -70,13 +84,14 @@ export const RegisterForm = () => {
       {/* Email */}
       <div className="space-y-1">
         <Label className="leading-5" htmlFor="userEmail">
-          Email address*
+          {t("emailLabel")}
         </Label>
         <Input
           type="email"
           id="userEmail"
-          placeholder="Enter your email address"
+          placeholder={t("emailPlaceholder")}
           {...register("email")}
+          className="rounded-sm"
         />
         {errors.email && (
           <p className="text-sm text-destructive">{errors.email.message}</p>
@@ -86,17 +101,18 @@ export const RegisterForm = () => {
       {/* Password */}
       <div className="w-full space-y-1">
         <Label className="leading-5" htmlFor="password">
-          Password*
+          {t("passwordLabel")}
         </Label>
         <div className="relative">
           <Input
             id="password"
             type={isPasswordVisible ? "text" : "password"}
-            placeholder="••••••••••••••••"
-            className="pr-9"
+            placeholder={t("passwordPlaceholder")}
+            className="pr-9 rounded-sm"
             {...register("password")}
           />
           <Button
+            type="button"
             variant="ghost"
             size="icon"
             onClick={() => setIsPasswordVisible((prevState) => !prevState)}
@@ -104,7 +120,7 @@ export const RegisterForm = () => {
           >
             {isPasswordVisible ? <EyeOffIcon /> : <EyeIcon />}
             <span className="sr-only">
-              {isPasswordVisible ? "Hide password" : "Show password"}
+              {isPasswordVisible ? t("hidePassword") : t("showPassword")}
             </span>
           </Button>
         </div>
@@ -116,17 +132,18 @@ export const RegisterForm = () => {
       {/* Confirm Password */}
       <div className="w-full space-y-1">
         <Label className="leading-5" htmlFor="confirmPassword">
-          Confirm Password*
+          {t("confirmPasswordLabel")}
         </Label>
         <div className="relative">
           <Input
             id="confirmPassword"
             type={isConfirmPasswordVisible ? "text" : "password"}
-            placeholder="••••••••••••••••"
-            className="pr-9"
+            placeholder={t("confirmPasswordPlaceholder")}
+            className="pr-9 rounded-sm"
             {...register("confirmPassword")}
           />
           <Button
+            type="button"
             variant="ghost"
             size="icon"
             onClick={() =>
@@ -136,7 +153,7 @@ export const RegisterForm = () => {
           >
             {isConfirmPasswordVisible ? <EyeOffIcon /> : <EyeIcon />}
             <span className="sr-only">
-              {isConfirmPasswordVisible ? "Hide password" : "Show password"}
+              {isConfirmPasswordVisible ? t("hidePassword") : t("showPassword")}
             </span>
           </Button>
         </div>
@@ -153,12 +170,16 @@ export const RegisterForm = () => {
           name="agreeToTerms"
           control={control}
           render={({ field }) => (
-            <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+            <Checkbox
+              checked={field.value}
+              onCheckedChange={field.onChange}
+              className="rounded-sm"
+            />
           )}
         />
         <Label htmlFor="rememberMe">
-          <span className="text-muted-foreground">I agree to</span>{" "}
-          <a href="#">privacy policy & terms</a>
+          <span className="text-muted-foreground">{t("agreeToTerms")}</span>{" "}
+          <a href="#">{t("privacyPolicy")}</a>
         </Label>
       </div>
       {errors.agreeToTerms && (
@@ -168,11 +189,14 @@ export const RegisterForm = () => {
       )}
 
       <Button
-        className={cn("w-full", isSubmitting ? "opacity-50" : "opacity-100")}
+        className={cn(
+          "w-full rounded-sm",
+          isSubmitting ? "opacity-50" : "opacity-100",
+        )}
         type="submit"
         disabled={isSubmitting}
       >
-        {isSubmitting ? "Signing up..." : "Sign Up"}
+        {isSubmitting ? t("submitting") : t("submit")}
       </Button>
     </form>
   );

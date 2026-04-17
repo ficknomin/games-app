@@ -1,4 +1,7 @@
+"use client";
+
 import { Button } from "@/app/shared/ui/button";
+import { useTranslations } from "next-intl";
 
 type ErrorStateProps = {
   message: string | undefined;
@@ -6,15 +9,17 @@ type ErrorStateProps = {
 };
 
 export const ErrorState = ({ message, onRetry }: ErrorStateProps) => {
+  const t = useTranslations("state");
+
   return (
     <div className="text-center py-10">
       <p className="text-destructive">
         {message === undefined
-          ? "Error loading. Please, try again."
-          : `${message} Please, try again.`}
+          ? t("errorGeneric")
+          : t("errorWithMessage", { message })}
       </p>
       <Button className="rounded-sm" onClick={onRetry}>
-        Retry
+        {t("retry")}
       </Button>
     </div>
   );

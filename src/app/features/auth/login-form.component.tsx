@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 
@@ -9,36 +9,45 @@ import { Checkbox } from "@/app/shared/ui/checkbox";
 import { Input } from "@/app/shared/ui/input";
 import { Label } from "@/app/shared/ui/label";
 import { useForm } from "react-hook-form";
-import { LoginFormData, loginSchema } from "./auth.schema";
+import { createLoginSchema, LoginFormData } from "./auth.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { signIn } from "./auth.service";
+import { useSessionStore } from "@/app/entities/session";
+import { useTranslations } from "next-intl";
+import { toast } from "sonner";
+import { cn } from "@/app/shared/interfaces/utils";
 
 export const LoginForm = () => {
+  const t = useTranslations("login");
+  const tValidation = useTranslations("validation");
+  const tAuthErrors = useTranslations("authErrors");
+
   const router = useRouter();
+  const { setSession } = useSessionStore();
   const [isVisible, setIsVisible] = useState(false);
+
+  const schema = useMemo(() => createLoginSchema(tValidation), [tValidation]);
+
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<LoginFormData>({
-    resolver: zodResolver(loginSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-    },
+    resolver: zodResolver(schema),
+    defaultValues: { email: "", password: "" },
   });
 
   const onSubmit = async (data: LoginFormData) => {
-    try {
-      const response = await signIn(data);
+    const response = await signIn(data);
 
-      if (response.success) {
-        router.push("/games");
-      }
-    } catch (error) {
-      console.error("Registration failed:", error);
+    if (response.success) {
+      setSession(response.data.accessToken, response.data.user);
+      router.push("/games");
+      return;
     }
+
+    toast.error(tAuthErrors(response.code));
   };
 
   return (
@@ -46,30 +55,35 @@ export const LoginForm = () => {
       {/* Email */}
       <div className="space-y-1">
         <Label htmlFor="userEmail" className="leading-5">
-          Email address*
+          {t("emailLabel")}
         </Label>
         <Input
           type="email"
           id="userEmail"
-          placeholder="Enter your email address"
+          placeholder={t("emailPlaceholder")}
+          className="rounded-sm"
           {...register("email")}
         />
+        {errors.email && (
+          <p className="text-sm text-destructive">{errors.email.message}</p>
+        )}
       </div>
 
       {/* Password */}
       <div className="w-full space-y-1">
         <Label htmlFor="password" className="leading-5">
-          Password*
+          {t("passwordLabel")}
         </Label>
         <div className="relative">
           <Input
             id="password"
             type={isVisible ? "text" : "password"}
-            placeholder="••••••••••••••••"
-            className="pr-9"
+            placeholder={t("passwordPlaceholder")}
+            className="pr-9 rounded-sm"
             {...register("password")}
           />
           <Button
+            type="button"
             variant="ghost"
             size="icon"
             onClick={() => setIsVisible((prevState) => !prevState)}
@@ -77,29 +91,35 @@ export const LoginForm = () => {
           >
             {isVisible ? <EyeOffIcon /> : <EyeIcon />}
             <span className="sr-only">
-              {isVisible ? "Hide password" : "Show password"}
+              {isVisible ? t("hidePassword") : t("showPassword")}
             </span>
           </Button>
         </div>
+        {errors.password && (
+          <p className="text-sm text-destructive">{errors.password.message}</p>
+        )}
       </div>
 
       {/* Remember Me and Forgot Password */}
       <div className="flex items-center justify-between gap-y-2">
         <div className="flex items-center gap-3">
-          <Checkbox id="rememberMe" className="size-6" />
+          <Checkbox id="rememberMe" className="size-6 rounded-sm" />
           <Label htmlFor="rememberMe" className="text-muted-foreground">
-            {" "}
-            Remember Me
+            {t("rememberMe")}
           </Label>
         </div>
 
         <a href="#" className="hover:underline">
-          Forgot Password?
+          {t("forgotPassword")}
         </a>
       </div>
 
-      <Button className="w-full" type="submit">
-        Sign in
+      <Button
+        className={cn("w-full rounded-sm", isSubmitting && "opacity-50")}
+        type="submit"
+        disabled={isSubmitting}
+      >
+        {isSubmitting ? t("submitting") : t("submit")}
       </Button>
     </form>
   );

@@ -27,6 +27,7 @@ import { GenreFilter, PlatformFilter } from "@/app/entities/models";
 import { usePlatforms } from "@/app/entities/api/platforms";
 import { LoadingState } from "@/app/shared/ui/loading-state";
 import { ErrorState } from "@/app/shared/ui/error-state";
+import { useTranslations } from "next-intl";
 
 export enum FilterTypes {
   RATINGASC = "RATINGASC",
@@ -44,6 +45,9 @@ export type GamesListFilters = {
 };
 
 export const GamesList = () => {
+  const t = useTranslations("games");
+  const tState = useTranslations("state");
+
   const [filters, setFilters] = useState<GamesListFilters>({
     search: "",
     genre: "",
@@ -110,10 +114,10 @@ export const GamesList = () => {
             onSubmit={handleSubmit(onSubmit)}
             className="flex flex-col items-left gap-4"
           >
-            <h1 className="text-lg mx-2 font-bold">Search Games</h1>
+            <h1 className="text-lg mx-2 font-bold">{t("searchTitle")}</h1>
             <Input
               type="text"
-              placeholder="Search games..."
+              placeholder={t("searchPlaceholder")}
               {...register("search")}
               className="w-full rounded-sm"
             />
@@ -126,17 +130,17 @@ export const GamesList = () => {
                   value={field.value || ""}
                 >
                   <SelectTrigger className="w-full rounded-sm">
-                    <SelectValue placeholder="Select genre" />
+                    <SelectValue placeholder={t("genrePlaceholder")} />
                   </SelectTrigger>
 
                   <SelectContent>
                     {isGenresLoading ? (
                       <SelectItem value="loading" disabled>
-                        Loading...
+                        {tState("loading")}
                       </SelectItem>
                     ) : isGenresError ? (
                       <SelectItem value="error" disabled>
-                        Error loading
+                        {tState("errorLoading")}
                       </SelectItem>
                     ) : (
                       genresData?.map((genre: GenreFilter) => (
@@ -159,17 +163,17 @@ export const GamesList = () => {
                   value={field.value || ""}
                 >
                   <SelectTrigger className="w-full rounded-sm">
-                    <SelectValue placeholder="Select platform" />
+                    <SelectValue placeholder={t("platformPlaceholder")} />
                   </SelectTrigger>
 
                   <SelectContent>
                     {isPlatformsLoading ? (
                       <SelectItem value="loading" disabled>
-                        Loading...
+                        {tState("loading")}
                       </SelectItem>
                     ) : isPlatformsError ? (
                       <SelectItem value="error" disabled>
-                        Error loading
+                        {tState("errorLoading")}
                       </SelectItem>
                     ) : (
                       platformsData?.map((platform: PlatformFilter) => (
@@ -192,17 +196,17 @@ export const GamesList = () => {
                   value={field.value || ""}
                 >
                   <SelectTrigger className="w-full rounded-sm">
-                    <SelectValue placeholder="Select order filter" />
+                    <SelectValue placeholder={t("orderPlaceholder")} />
                   </SelectTrigger>
 
                   <SelectContent>
                     {isPlatformsLoading ? (
                       <SelectItem value="loading" disabled>
-                        Loading...
+                        {tState("loading")}
                       </SelectItem>
                     ) : isPlatformsError ? (
                       <SelectItem value="error" disabled>
-                        Error loading
+                        {tState("errorLoading")}
                       </SelectItem>
                     ) : (
                       <SelectGroup>
@@ -210,25 +214,25 @@ export const GamesList = () => {
                           key={FilterTypes.RATINGASC}
                           value={FilterTypes.RATINGASC}
                         >
-                          Rating Ascending
+                          {t("filters.ratingAsc")}
                         </SelectItem>
                         <SelectItem
                           key={FilterTypes.RATINGDESC}
                           value={FilterTypes.RATINGDESC}
                         >
-                          Rating Descending
+                          {t("filters.ratingDesc")}
                         </SelectItem>
                         <SelectItem
                           key={FilterTypes.YEARASC}
                           value={FilterTypes.YEARASC}
                         >
-                          Release Date Ascending
+                          {t("filters.yearAsc")}
                         </SelectItem>
                         <SelectItem
                           key={FilterTypes.YEARDESC}
                           value={FilterTypes.YEARDESC}
                         >
-                          Release Date Descending
+                          {t("filters.yearDesc")}
                         </SelectItem>
                       </SelectGroup>
                     )}
@@ -246,7 +250,7 @@ export const GamesList = () => {
               }
               disabled={isSubmitting}
             >
-              {isSubmitting ? "Searching..." : "Search"}
+              {isSubmitting ? t("searching") : t("searchButton")}
             </Button>
           </form>
         </div>
@@ -263,7 +267,7 @@ export const GamesList = () => {
 
         {gamesData?.results.length === 0 && (
           <div className="col-span-full text-center text-lg text-muted-foreground pt-12 pb-8">
-            No games found matching your criteria.
+            {t("empty")}
           </div>
         )}
       </div>

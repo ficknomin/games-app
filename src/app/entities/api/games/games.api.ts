@@ -3,7 +3,7 @@ import {
   GamesListFilters,
 } from "@/app/modules/games-list/games-list.module";
 import { Game, GamesResponse } from "@/app/entities/models/game.model";
-import { createClient } from "@/config/env/env.client";
+import { createClient } from "@/config/db/env.client";
 
 export const fetchGames = async (
   filters: GamesListFilters,

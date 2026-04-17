@@ -1,31 +1,48 @@
 "use server";
 
 import { LoginFormData, RegisterFormData } from "./auth.schema";
-import { createClient } from "@/config/env/env.server";
+import { createClient } from "@/config/db/env.server";
+import { signAccessToken } from "@/app/shared/lib/jwt/sign";
+import { JWT_CONFIG } from "@/app/shared/config/jwt";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
-export async function signUp(data: RegisterFormData) {
+export type AuthErrorCode =
+  | "emailTaken"
+  | "invalidCredentials"
+  | "sessionFailed"
+  | "insertFailed"
+  | "lookupFailed"
+  | "unexpected";
+
+type AuthData = {
+  accessToken: string;
+  user: { userId: string; email: string; username: string };
+};
+
+export type AuthResult =
+  | { success: true; data: AuthData }
+  | { success: false; code: AuthErrorCode };
+
+export async function signUp(data: RegisterFormData): Promise<AuthResult> {
   try {
     const supabaseClient = await createClient();
 
-    // 1. Check if user already exists
     const { data: returnUser, error: lookupError } = await supabaseClient
       .from("users")
       .select("id")
       .eq("email", data.email);
 
     if (lookupError) {
-      return { success: false, error: "Database lookup failed", code: "UNEXPECTED" };
+      return { success: false, code: "lookupFailed" };
     }
 
     if (returnUser && returnUser.length > 0) {
-      return { success: false, error: "Email already in use", code: "EMAIL_TAKEN" };
+      return { success: false, code: "emailTaken" };
     }
 
-    // 2. Hash the password and insert the new user
     const hashedPassword = await bcrypt.hash(data.password, 10);
 
     const { data: newUser, error: insertError } = await supabaseClient
@@ -35,32 +52,34 @@ export async function signUp(data: RegisterFormData) {
         email: data.email,
         password_hash: hashedPassword,
       })
-      .select("id")
+      .select("id, email, username")
       .single();
 
     if (insertError || !newUser) {
-      return { success: false, error: "Failed to create account", code: "INSERT" };
+      return { success: false, code: "insertFailed" };
     }
 
-    // 3. Create a session
-    const sessionToken = crypto.randomBytes(32).toString("hex");
-    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+    // Refresh token (httpOnly cookie)
+    const refreshToken = crypto.randomBytes(32).toString("hex");
+    const expiresAt = new Date(Date.now() + JWT_CONFIG.refreshTokenExpiry);
 
     const { error: sessionError } = await supabaseClient
       .from("sessions")
       .insert({
         user_id: newUser.id,
-        token_hash: crypto.createHash("sha256").update(sessionToken).digest("hex"),
+        token_hash: crypto
+          .createHash("sha256")
+          .update(refreshToken)
+          .digest("hex"),
         expires_at: expiresAt,
       });
 
     if (sessionError) {
-      return { success: false, error: "Session creation failed", code: "SESSION_FAILED" };
+      return { success: false, code: "sessionFailed" };
     }
 
-    // 4. Set the session cookie
     const cookieStore = await cookies();
-    cookieStore.set("session_token", sessionToken, {
+    cookieStore.set("refresh_token", refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
@@ -68,53 +87,76 @@ export async function signUp(data: RegisterFormData) {
       path: "/",
     });
 
-    return { success: true, data: { userId: newUser.id } };
+    // Access token returned to client
+    const accessToken = await signAccessToken({
+      userId: newUser.id,
+      email: newUser.email,
+      username: newUser.username,
+    });
+
+    return {
+      success: true,
+      data: {
+        accessToken,
+        user: {
+          userId: newUser.id,
+          email: newUser.email,
+          username: newUser.username,
+        },
+      },
+    };
   } catch (error) {
     console.error("[signUp]", error);
-    return { success: false, error: "Unexpected error", code: "UNEXPECTED" };
+    return { success: false, code: "unexpected" };
   }
 }
 
-export async function signIn(data: LoginFormData) {
+export async function signIn(data: LoginFormData): Promise<AuthResult> {
   try {
     const supabaseClient = await createClient();
 
-    // 1. Look up the user by email
     const { data: user, error: lookupError } = await supabaseClient
       .from("users")
-      .select("id, email, password_hash")
+      .select("id, email, username, password_hash")
       .eq("email", data.email)
       .single();
 
     if (lookupError || !user) {
-      return { success: false, error: "Invalid email or password", code: "INVALID_CREDENTIALS" };
+      return { success: false, code: "invalidCredentials" };
     }
 
-    // 2. Compare password against stored hash
-    const passwordMatch = await bcrypt.compare(data.password, user.password_hash);
+    const passwordMatch = await bcrypt.compare(
+      data.password,
+      user.password_hash,
+    );
     if (!passwordMatch) {
-      return { success: false, error: "Invalid email or password", code: "INVALID_CREDENTIALS" };
+      return { success: false, code: "invalidCredentials" };
     }
 
-    // 3. Invalidate any existing sessions
     await supabaseClient.from("sessions").delete().eq("user_id", user.id);
 
-    // 4. Create a new session
-    const sessionToken = crypto.randomBytes(32).toString("hex");
-    const tokenHash = crypto.createHash("sha256").update(sessionToken).digest("hex");
-    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+    // Refresh token (httpOnly cookie)
+    const refreshToken = crypto.randomBytes(32).toString("hex");
+    const tokenHash = crypto
+      .createHash("sha256")
+      .update(refreshToken)
+      .digest("hex");
+    const expiresAt = new Date(Date.now() + JWT_CONFIG.refreshTokenExpiry);
 
     const { error: sessionError } = await supabaseClient
       .from("sessions")
-      .insert({ user_id: user.id, token_hash: tokenHash, expires_at: expiresAt });
+      .insert({
+        user_id: user.id,
+        token_hash: tokenHash,
+        expires_at: expiresAt,
+      });
 
     if (sessionError) {
-      return { success: false, error: "Session creation failed", code: "SESSION_FAILED" };
+      return { success: false, code: "sessionFailed" };
     }
 
-    // 5. Set the session cookie
     const cookieStore = await cookies();
-    cookieStore.set("session_token", sessionToken, {
+    cookieStore.set("refresh_token", refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
@@ -122,16 +164,33 @@ export async function signIn(data: LoginFormData) {
       path: "/",
     });
 
-    return { success: true, data: { userId: user.id } };
+    // Access token (returned to client)
+    const accessToken = await signAccessToken({
+      userId: user.id,
+      email: user.email,
+      username: user.username,
+    });
+
+    return {
+      success: true,
+      data: {
+        accessToken,
+        user: {
+          userId: user.id,
+          email: user.email,
+          username: user.username,
+        },
+      },
+    };
   } catch (error) {
     console.error("[signIn]", error);
-    return { success: false, error: "Unexpected error", code: "UNEXPECTED" };
+    return { success: false, code: "unexpected" };
   }
 }
 
 export async function getSessionUserId(): Promise<string | null> {
   const cookieStore = await cookies();
-  const token = cookieStore.get("session_token")?.value;
+  const token = cookieStore.get("refresh_token")?.value;
   if (!token) return null;
 
   const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
@@ -150,16 +209,19 @@ export async function getSessionUserId(): Promise<string | null> {
 
 export async function signOut() {
   const cookieStore = await cookies();
-  const token = cookieStore.get("session_token")?.value;
+  const token = cookieStore.get("refresh_token")?.value;
 
   if (token) {
     const supabaseClient = await createClient();
     await supabaseClient
       .from("sessions")
       .delete()
-      .eq("token_hash", crypto.createHash("sha256").update(token).digest("hex"));
+      .eq(
+        "token_hash",
+        crypto.createHash("sha256").update(token).digest("hex"),
+      );
   }
 
-  cookieStore.delete("session_token");
+  cookieStore.delete("refresh_token");
   redirect("/login");
 }
