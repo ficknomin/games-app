@@ -1,3 +1,5 @@
+import ky from 'ky'
+
 import { FilterTypes, GamesListFilters } from '@/app/entities/models'
 import { Game, GamesResponse } from '@/app/entities/models/game.model'
 import { createClient } from '@/pkg/supabase/client'
@@ -67,22 +69,16 @@ export const fetchGame = async (id: string): Promise<Game> => {
   return data[0]
 }
 
+type RawgListResponse<T> = { results: T[] }
+
 export const fetchGenres = async () => {
-  const response = await fetch(`https://api.rawg.io/api/genres?key=${process.env.NEXT_PUBLIC_RAWG_API_KEY}`)
-
-  if (!response.ok) {
-    throw new Error(`Failed to fetch games: ${response.statusText}`)
-  }
-
-  return response.json()
+  return ky
+    .get(`https://api.rawg.io/api/genres?key=${process.env.NEXT_PUBLIC_RAWG_API_KEY}`)
+    .json<RawgListResponse<{ id: string; name: string; slug: string }>>()
 }
 
 export const fetchPlatforms = async () => {
-  const response = await fetch(`https://api.rawg.io/api/platforms?key=${process.env.NEXT_PUBLIC_RAWG_API_KEY}`)
-
-  if (!response.ok) {
-    throw new Error(`Failed to fetch platforms: ${response.statusText}`)
-  }
-
-  return response.json()
+  return ky
+    .get(`https://api.rawg.io/api/platforms?key=${process.env.NEXT_PUBLIC_RAWG_API_KEY}`)
+    .json<RawgListResponse<{ id: string; name: string; slug: string }>>()
 }

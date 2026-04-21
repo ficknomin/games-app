@@ -1,4 +1,5 @@
 import "dotenv/config";
+import ky from "ky";
 import { createClient } from "@supabase/supabase-js";
 import { Game } from "@/app/entities/models/game.model";
 
@@ -11,13 +12,11 @@ const PAGE_SIZE = 10;
 const MAX_PAGES = 20;
 
 const fetchGames = async (page: number) => {
-  const res = await fetch(
-    `https://api.rawg.io/api/games?key=${process.env.NEXT_PUBLIC_RAWG_API_KEY}&page=${page}&page_size=${PAGE_SIZE}`,
-  );
-
-  if (!res.ok) throw new Error("Failed to fetch RAWG");
-
-  return res.json();
+  return ky
+    .get(
+      `https://api.rawg.io/api/games?key=${process.env.NEXT_PUBLIC_RAWG_API_KEY}&page=${page}&page_size=${PAGE_SIZE}`,
+    )
+    .json<{ results: Game[] }>();
 };
 
 const transformGameData = (game: Game) => ({
