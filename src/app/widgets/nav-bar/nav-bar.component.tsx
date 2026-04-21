@@ -24,7 +24,6 @@ export const NavBar: FC<Readonly<IProps>> = () => {
       <div className='mx-auto flex h-16 max-w-7xl items-center justify-between gap-6 px-6'>
         {/* Brand */}
         <Link href='/' className='group flex items-center gap-2 rounded-sm'>
-          <span className='bg-primary inline-block h-2.5 w-2.5 rounded-full transition-transform group-hover:scale-110' />
           <span className='font-heading hidden text-sm font-semibold tracking-[0.18em] uppercase sm:inline'>
             {t('brand')}
           </span>
