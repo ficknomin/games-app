@@ -36,7 +36,7 @@ NEXT_PUBLIC_RAWG_API_KEY=your_api_key_here
 4. Run the development server
 
 ```bash
-npm run dev
+yarn dev
 ```
 
 The development server will run on http://localhost:3000

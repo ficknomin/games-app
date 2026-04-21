@@ -1,29 +1,27 @@
-import { Formats, hasLocale } from "next-intl";
-import { getRequestConfig } from "next-intl/server";
+import { Formats, hasLocale } from 'next-intl'
+import { getRequestConfig } from 'next-intl/server'
 
-import { routing } from "./routing";
+import { routing } from './routing'
 
 // request
 export default getRequestConfig(async ({ requestLocale }) => {
-  const requested = await requestLocale;
-  const locale = hasLocale(routing.locales, requested)
-    ? requested
-    : routing.defaultLocale;
+  const requested = await requestLocale
+  const locale = hasLocale(routing.locales, requested) ? requested : routing.defaultLocale
 
   return {
     locale,
     formats,
     messages: (await import(`../../../translations/${locale}.json`)).default,
-  };
-});
+  }
+})
 
 // formats
 export const formats = {
   dateTime: {
     short: {
-      day: "numeric",
-      month: "short",
-      year: "numeric",
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
     },
   },
   number: {
@@ -33,8 +31,8 @@ export const formats = {
   },
   list: {
     enumeration: {
-      style: "long",
-      type: "conjunction",
+      style: 'long',
+      type: 'conjunction',
     },
   },
-} satisfies Formats;
+} satisfies Formats

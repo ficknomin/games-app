@@ -1,33 +1,30 @@
-import { NavBar } from "@/app/widgets/nav-bar";
-import { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
+import { Metadata } from 'next'
+import { getTranslations } from 'next-intl/server'
+import { type FC, type ReactNode } from 'react'
 
-export const generateMetadata = async ({
-  params,
-}: {
-  params: Promise<{ locale: string }>;
-}): Promise<Metadata> => {
-  const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "metadata.games" });
+import { PageShell } from '@/app/widgets/page-shell'
+
+interface IProps {
+  children: ReactNode
+}
+
+export const generateMetadata = async ({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> => {
+  const { locale } = await params
+  const t = await getTranslations({ locale, namespace: 'metadata.games' })
 
   return {
     title: {
-      default: t("title"),
-      template: t("titleTemplate"),
+      default: t('title'),
+      template: t('titleTemplate'),
     },
-    description: t("description"),
-  };
-};
-
-export default function Layout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  return (
-    <div className="min-h-full w-full flex flex-col">
-      <NavBar />
-      {children}
-    </div>
-  );
+    description: t('description'),
+  }
 }
+
+const GamesLayout: FC<Readonly<IProps>> = (props) => {
+  const { children } = props
+
+  return <PageShell>{children}</PageShell>
+}
+
+export default GamesLayout

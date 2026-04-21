@@ -1,21 +1,13 @@
-import { GamesList } from "@/app/modules/games-list";
-import { getTranslations } from "next-intl/server";
+import { type FC } from 'react'
 
-export const revalidate = 3600;
+import { GamesList } from '@/app/modules/games-list'
 
-const GamesPage = async () => {
-  const t = await getTranslations("games");
+export const revalidate = 3600
 
-  return (
-    <div className="min-h-screen bg-background">
-      <main className="max-w-7xl mx-auto px-6 py-16">
-        <h1 className="text-3xl font-bold px-2 pb-5 md:ms-10 -mt-5">
-          {t("pageTitle")}
-        </h1>
-        <GamesList />
-      </main>
-    </div>
-  );
-};
+interface IProps {}
 
-export default GamesPage;
+const GamesPage: FC<Readonly<IProps>> = () => {
+  return <GamesList />
+}
+
+export default GamesPage

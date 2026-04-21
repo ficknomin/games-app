@@ -1,1 +1,1 @@
-export { GameCard } from "./game-card.component";
+export { GameCard } from './game-card.component'

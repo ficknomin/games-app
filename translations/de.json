@@ -27,6 +27,7 @@
     "gameDescription": "Games Hub. Spielbeschreibung für: {name}"
   },
   "nav": {
+    "brand": "Games Hub",
     "home": "Startseite",
     "allGames": "Alle Spiele",
     "favorites": "Favoriten"
@@ -38,12 +39,24 @@
     "signOut": "Abmelden"
   },
   "home": {
+    "kicker": "Ein Ort für Spieler",
     "title": "Games Hub",
-    "subtitle": "Entdecke und markiere deine Lieblingsspiele",
-    "exploreButton": "Spiele entdecken"
+    "subtitle": "Ein ruhiges Regal für jedes Spiel, das du je geliebt hast. Durchstöbere eine lebendige Bibliothek auf allen Plattformen und halte fest, zu welchen Titeln du zurückkehren möchtest.",
+    "exploreButton": "Spiele entdecken",
+    "favoritesButton": "Deine Favoriten",
+    "statLabel": "Erfasste Titel",
+    "statValue": "1.000+"
   },
   "games": {
+    "pageKicker": "Die Bibliothek",
     "pageTitle": "Alle Spiele",
+    "pageSubtitle": "Durchstöbere den Katalog über alle Genres und Plattformen hinweg.",
+    "filtersTitle": "Verfeinern",
+    "filtersSubtitle": "Das Regal eingrenzen",
+    "searchLabel": "Suche",
+    "genreLabel": "Genre",
+    "platformLabel": "Plattform",
+    "orderLabel": "Sortieren nach",
     "searchTitle": "Spiele suchen",
     "searchPlaceholder": "Spiele suchen...",
     "genrePlaceholder": "Genre auswählen",
@@ -62,11 +75,15 @@
     "metacritic": "Metacritic"
   },
   "favorites": {
+    "pageKicker": "Dein Regal",
     "pageTitle": "Lieblingsspiele",
-    "empty": "Du hast noch keine Spiele zu den Favoriten hinzugefügt."
+    "pageSubtitle": "Die Spiele, die du dir für später vorgemerkt hast.",
+    "empty": "Dein Regal ist leer. Markiere ein Spiel aus der Bibliothek und es erscheint hier."
   },
   "login": {
+    "kicker": "Willkommen zurück",
     "heading": "Willkommen zurück",
+    "subheading": "Mach da weiter, wo du aufgehört hast.",
     "emailLabel": "E-Mail-Adresse*",
     "emailPlaceholder": "Gib deine E-Mail-Adresse ein",
     "passwordLabel": "Passwort*",
@@ -79,7 +96,9 @@
     "submitting": "Anmeldung..."
   },
   "register": {
+    "kicker": "Neu hier",
     "heading": "Konto erstellen",
+    "subheading": "Leg dir dein eigenes Regal an.",
     "usernameLabel": "Benutzername*",
     "usernamePlaceholder": "Gib deinen Benutzernamen ein",
     "emailLabel": "E-Mail-Adresse*",

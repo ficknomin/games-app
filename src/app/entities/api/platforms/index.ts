@@ -1,1 +1,1 @@
-export { usePlatforms } from "./platforms.query";
+export { usePlatforms } from './platforms.query'

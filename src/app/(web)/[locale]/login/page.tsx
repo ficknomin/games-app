@@ -1,35 +1,23 @@
-import { LoginForm } from "@/app/features/auth";
-import { Card } from "@/app/shared/ui/card";
-import { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
+import { Metadata } from 'next'
+import { getTranslations } from 'next-intl/server'
+import { type FC } from 'react'
 
-export const generateMetadata = async ({
-  params,
-}: {
-  params: Promise<{ locale: string }>;
-}): Promise<Metadata> => {
-  const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "metadata.login" });
+import { LoginModule } from '@/app/modules/login'
+
+export const generateMetadata = async ({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> => {
+  const { locale } = await params
+  const t = await getTranslations({ locale, namespace: 'metadata.login' })
 
   return {
-    title: t("title"),
-    description: t("description"),
-  };
-};
+    title: t('title'),
+    description: t('description'),
+  }
+}
 
-const LoginPage = async () => {
-  const t = await getTranslations("login");
+interface IProps {}
 
-  return (
-    <div className="flex min-h-screen items-center justify-center px-4">
-      <Card className="w-full max-w-sm rounded-sm bg-card p-8 shadow-lg">
-        <h1 className="mb-6 text-xl font-semibold tracking-light">
-          {t("heading")}
-        </h1>
-        <LoginForm />
-      </Card>
-    </div>
-  );
-};
+const LoginPage: FC<Readonly<IProps>> = () => {
+  return <LoginModule />
+}
 
-export default LoginPage;
+export default LoginPage

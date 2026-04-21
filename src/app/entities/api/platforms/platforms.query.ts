@@ -1,15 +1,16 @@
-import { fetchPlatforms } from "@/app/entities/api/games/games.api";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery } from '@tanstack/react-query'
+
+import { fetchPlatforms } from '@/app/entities/api/games/games.api'
 
 type PlatformsResponse = {
-  id: string;
-  name: string;
-  slug: string;
-};
+  id: string
+  name: string
+  slug: string
+}
 
 export const usePlatforms = () => {
   return useQuery({
-    queryKey: ["platforms"],
+    queryKey: ['platforms'],
     queryFn: fetchPlatforms,
 
     select: (data) =>
@@ -17,5 +18,5 @@ export const usePlatforms = () => {
         label: platform.name,
         value: platform.id.toString(),
       })),
-  });
-};
+  })
+}

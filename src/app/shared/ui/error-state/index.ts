@@ -1,1 +1,1 @@
-export { ErrorState } from "./error-state.component";
+export { ErrorState } from './error-state.component'

@@ -1,87 +1,84 @@
-"use client";
+'use client'
 
-import { FavoriteGame, Game } from "@/app/entities/models";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/app/shared/ui/card";
-import Image from "next/image";
-import { Button } from "@/app/shared/ui/button";
-import { ArrowRight, Heart } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useToggleFavorites } from "@/app/features/toggle-favorite";
-import { useFavoritesStore } from "@/app/shared/hooks";
-import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { ArrowRight, Heart } from 'lucide-react'
+import Image from 'next/image'
+import { useTranslations } from 'next-intl'
+import { type FC } from 'react'
 
-export const GameCard = ({ game }: { game: Game | FavoriteGame }) => {
-  const t = useTranslations("games");
-  const router = useRouter();
-  const favorite = useFavoritesStore((s) => !!s.favorites[game.id]);
-  const toggleFavorite = useToggleFavorites().toggleFavorite;
+import { FavoriteGame, Game } from '@/app/entities/models'
+import { useToggleFavorites } from '@/app/features/toggle-favorite'
+import { useFavoritesStore } from '@/app/shared/hooks'
+import { Button } from '@/app/shared/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/shared/ui/card'
+import { useRouter } from '@/pkg/locale'
+
+interface IProps {
+  game: Game | FavoriteGame
+}
+
+export const GameCard: FC<Readonly<IProps>> = (props) => {
+  const { game } = props
+  const t = useTranslations('games')
+  const router = useRouter()
+  const favorite = useFavoritesStore((s) => !!s.favorites[game.id])
+  const toggleFavorite = useToggleFavorites().toggleFavorite
 
   return (
     <Card
-      data-testid="game-card"
+      data-testid='game-card'
       onClick={() => router.push(`/games/${game.id}`)}
-      className="group p-0 rounded-sm overflow-hidden bg-card shadow-md hover:shadow-lg transition-shadow cursor-pointer"
+      className='group bg-card cursor-pointer overflow-hidden rounded-sm p-0 shadow-md transition-shadow hover:shadow-lg'
     >
-      <div className="relative w-full aspect-video flex">
+      {/* Cover */}
+      <div className='relative flex aspect-video w-full'>
         <Image
           src={game.background_image}
           alt={game.name}
-          sizes="auto"
+          sizes='auto'
           fill
-          className="object-cover transition-transform duration-299 group-hover:scale-105"
+          className='object-cover transition-transform duration-299 group-hover:scale-105'
         />
       </div>
 
-      <CardHeader className="p-3">
-        <CardTitle
-          data-testid="game-card-title"
-          className="text-sm text-left line-clamp-2"
-        >
+      {/* Title */}
+      <CardHeader className='p-3'>
+        <CardTitle data-testid='game-card-title' className='line-clamp-2 text-left text-sm'>
           {game.name}
         </CardTitle>
-        <CardDescription className="text-xs text-left text-muted-foreground">
-          {game.released ? game.released.split("-")[0] : t("tba")}
+
+        <CardDescription className='text-muted-foreground text-left text-xs'>
+          {game.released ? game.released.split('-')[0] : t('tba')}
         </CardDescription>
       </CardHeader>
 
-      <CardContent className="px-3 pb-3 flex justify-between">
+      {/* Actions */}
+      <CardContent className='flex justify-between px-3 pb-3'>
         <Button
-          variant={"ghost"}
-          data-testid="favorite-button"
+          variant={'ghost'}
+          data-testid='favorite-button'
           data-favorited={favorite}
-          className="opacity-100 hover:!bg-transparent group-hover:opacity-100 md:opacity-0 transition-opacity duration-300 cursor-pointer"
+          className='cursor-pointer opacity-100 transition-opacity duration-300 group-hover:opacity-100 hover:!bg-transparent md:opacity-0'
           onClick={(e) => {
-            e.stopPropagation();
+            e.stopPropagation()
             toggleFavorite({
               id: game.id,
               name: game.name,
               background_image: game.background_image,
               released: game.released,
-            });
+            })
           }}
         >
-          {favorite ? (
-            <Heart fill={"red"} className="w-5 h-5" />
-          ) : (
-            <Heart className="w-5 h-5 bg-transparent" />
-          )}
+          {favorite ? <Heart fill={'red'} className='h-5 w-5' /> : <Heart className='h-5 w-5 bg-transparent' />}
         </Button>
 
         <Button
-          variant={"ghost"}
-          className="opacity-100 group-hover:opacity-100 hover:!bg-transparent md:opacity-0 transition-opacity duration-300 cursor-pointer"
-          size="icon"
+          variant={'ghost'}
+          className='cursor-pointer opacity-100 transition-opacity duration-300 group-hover:opacity-100 hover:!bg-transparent md:opacity-0'
+          size='icon'
         >
-          <ArrowRight className="w-4 h-4" />
+          <ArrowRight className='h-4 w-4' />
         </Button>
       </CardContent>
     </Card>
-  );
-};
+  )
+}

@@ -1,7 +1,2 @@
-export {
-  addFavoriteDB,
-  removeFavoriteDB,
-  fetchFavoritesDB,
-  syncFavoritesOnLogin,
-} from "./favorites.api";
-export { useSyncFavorites } from "./favorites.query";
+export { addFavoriteDB, fetchFavoritesDB, removeFavoriteDB, syncFavoritesOnLogin } from './favorites.api'
+export { useSyncFavorites } from './favorites.query'

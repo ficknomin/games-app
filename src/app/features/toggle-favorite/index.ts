@@ -1,1 +1,1 @@
-export { useToggleFavorites } from "./toggle-favorite.service";
+export { useToggleFavorites } from './toggle-favorite.service'

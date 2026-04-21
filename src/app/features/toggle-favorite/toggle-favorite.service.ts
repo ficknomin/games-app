@@ -1,29 +1,29 @@
-import { FavoriteGame } from "@/app/entities/models";
-import { useFavoritesStore } from "@/app/shared/hooks";
-import { addFavoriteDB, removeFavoriteDB } from "@/app/entities/api/favorites";
+import { addFavoriteDB, removeFavoriteDB } from '@/app/entities/api/favorites'
+import { FavoriteGame } from '@/app/entities/models'
+import { useFavoritesStore } from '@/app/shared/hooks'
 
 export const useToggleFavorites = () => {
-  const { addFavorite, removeFavorite, isFavorite } = useFavoritesStore();
+  const { addFavorite, removeFavorite, isFavorite } = useFavoritesStore()
 
   const toggleFavorite = async (game: FavoriteGame) => {
-    const favorite = isFavorite(game.id);
+    const favorite = isFavorite(game.id)
 
     if (favorite) {
-      removeFavorite(game.id);
+      removeFavorite(game.id)
       try {
-        await removeFavoriteDB(game.id);
+        await removeFavoriteDB(game.id)
       } catch {
-        addFavorite(game);
+        addFavorite(game)
       }
     } else {
-      addFavorite(game);
+      addFavorite(game)
       try {
-        await addFavoriteDB(game.id);
+        await addFavoriteDB(game.id)
       } catch {
-        removeFavorite(game.id);
+        removeFavorite(game.id)
       }
     }
-  };
+  }
 
-  return { toggleFavorite, isFavorite };
-};
+  return { toggleFavorite, isFavorite }
+}

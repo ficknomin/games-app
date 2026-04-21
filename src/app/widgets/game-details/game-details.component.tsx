@@ -1,91 +1,79 @@
-"use client";
+'use client'
 
-import { useGame } from "@/app/entities/api/games";
-import Image from "next/image";
-import { Badge } from "@/app/shared/ui/badge";
-import { LoadingState } from "@/app/shared/ui/loading-state";
-import { ErrorState } from "@/app/shared/ui/error-state";
-import { useTranslations } from "next-intl";
+import Image from 'next/image'
+import { useTranslations } from 'next-intl'
+import { type FC } from 'react'
 
-type GameDetailsProps = {
-  id: string;
-};
+import { useGame } from '@/app/entities/api/games'
+import { Badge } from '@/app/shared/ui/badge'
+import { ErrorState } from '@/app/shared/ui/error-state'
+import { LoadingState } from '@/app/shared/ui/loading-state'
 
-export const GameDetails = ({ id }: GameDetailsProps) => {
-  const t = useTranslations("games");
-  const { isLoading, isError, data, error, refetch } = useGame(id);
+interface IProps {
+  id: string
+}
+
+export const GameDetails: FC<Readonly<IProps>> = (props) => {
+  const { id } = props
+  const t = useTranslations('games')
+  const { isLoading, isError, data, error, refetch } = useGame(id)
 
   if (isLoading) {
-    return <LoadingState />;
+    return <LoadingState />
   }
 
   if (isError) {
-    return <ErrorState message={error?.message} onRetry={refetch} />;
+    return <ErrorState message={error?.message} onRetry={refetch} />
   }
 
-  if (!data) return null;
+  if (!data) return null
 
   return (
-    <div className="max-w-4xl w-full space-y-4">
-      <div className="bg-card rounded-sm shadow-md overflow-hidden">
-        <div className="relative w-full h-96 flex">
-          <Image
-            src={data.background_image}
-            alt={data.name}
-            fill
-            className="object-cover"
-            priority
-          />
+    <div className='bg-background mt-12 flex flex-1 flex-col items-center justify-center px-4'>
+      <div className='w-full max-w-4xl space-y-4'>
+        <div className='bg-card overflow-hidden rounded-sm shadow-md'>
+          <div className='relative flex h-96 w-full'>
+            <Image src={data.background_image} alt={data.name} fill className='object-cover' priority />
 
-          <div className="absolute inset-0 bg-linear-to-t from-card via-card/31 to-transparent" />
+            <div className='from-card via-card/31 absolute inset-0 bg-linear-to-t to-transparent' />
 
-          {data.metacritic && (
-            <div className="absolute top-4 right-4 flex flex-col items-center border bg-card border-green-500/50 rounded-sm px-3 py-1.5">
-              <span className="text-lg font-bold text-green-400 leading-none">
-                {data.metacritic}
-              </span>
-              <span className="text-[10px] text-muted-foreground mt-0.5">
-                {t("metacritic")}
-              </span>
-            </div>
-          )}
-        </div>
-
-        <div className="px-6 pb-6 -mt-8 relative">
-          <div className="flex items-end justify-between gap-4 flex-wrap">
-            <div>
-              <h1
-                data-testid="game-detail-title"
-                className="text-2xl font-bold"
-              >
-                {data.name}
-              </h1>
-              <div className="flex items-center gap-2 mt-1 flex-wrap">
-                <span className="text-sm text-muted-foreground">
-                  {data.released ? data.released.split("-")[0] : t("tba")}
-                </span>
+            {data.metacritic && (
+              <div className='bg-card absolute top-4 right-4 flex flex-col items-center rounded-sm border border-green-500/50 px-3 py-1.5'>
+                <span className='text-lg leading-none font-bold text-green-400'>{data.metacritic}</span>
+                <span className='text-muted-foreground mt-0.5 text-[10px]'>{t('metacritic')}</span>
               </div>
-            </div>
+            )}
           </div>
 
-          <div className="flex items-center gap-2 mt-4 flex-wrap">
-            {data.genres.map((genre) => (
-              <Badge
-                key={genre}
-                variant="secondary"
-                className="rounded-sm text-xs text-foreground"
-              >
-                {genre}
-              </Badge>
-            ))}
-            {data.platforms.map((platform) => (
-              <span key={platform} className="text-xs text-muted-foreground">
-                {platform} ·
-              </span>
-            ))}
+          <div className='relative -mt-8 px-6 pb-6'>
+            <div className='flex flex-wrap items-end justify-between gap-4'>
+              <div>
+                <h1 data-testid='game-detail-title' className='text-2xl font-bold'>
+                  {data.name}
+                </h1>
+                <div className='mt-1 flex flex-wrap items-center gap-2'>
+                  <span className='text-muted-foreground text-sm'>
+                    {data.released ? data.released.split('-')[0] : t('tba')}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className='mt-4 flex flex-wrap items-center gap-2'>
+              {data.genres.map((genre) => (
+                <Badge key={genre} variant='secondary' className='text-foreground rounded-sm text-xs'>
+                  {genre}
+                </Badge>
+              ))}
+              {data.platforms.map((platform) => (
+                <span key={platform} className='text-muted-foreground text-xs'>
+                  {platform} ·
+                </span>
+              ))}
+            </div>
           </div>
         </div>
       </div>
     </div>
-  );
-};
+  )
+}

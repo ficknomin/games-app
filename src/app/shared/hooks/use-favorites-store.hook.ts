@@ -1,6 +1,7 @@
-import { FavoritesStore } from "@/app/shared/store/favorites.store";
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
+
+import { FavoritesStore } from '@/app/shared/store/favorites.store'
 
 export const useFavoritesStore = create<FavoritesStore>()(
   persist(
@@ -22,17 +23,17 @@ export const useFavoritesStore = create<FavoritesStore>()(
 
       removeFavorite: (id) =>
         set((state) => {
-          const updated = { ...state.favorites };
-          delete updated[id];
-          return { favorites: updated };
+          const updated = { ...state.favorites }
+          delete updated[id]
+          return { favorites: updated }
         }),
 
       isFavorite: (id) => {
-        return !!get().favorites[id];
+        return !!get().favorites[id]
       },
     }),
     {
-      name: "favorites-storage",
+      name: 'favorites-storage',
     },
   ),
-);
+)

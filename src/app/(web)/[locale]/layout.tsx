@@ -1,36 +1,37 @@
-import type { Metadata } from "next";
-import { Provider } from "@/config/providers/query-provider.component";
-import { SyncProvider } from "@/config/providers/sync-provider.component";
-import { routing } from "@/pkg/locale";
-import { FC, ReactNode } from "react";
-import { hasLocale, NextIntlClientProvider } from "next-intl";
-import { SessionProvider } from "@/app/entities/session";
-import { Toaster } from "sonner";
-import { notFound } from "next/navigation";
-import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
+import type { Metadata } from 'next'
+import { notFound } from 'next/navigation'
+import { hasLocale, NextIntlClientProvider } from 'next-intl'
+import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server'
+import { type FC, type ReactNode } from 'react'
+import { Toaster } from 'sonner'
+
+import { SessionProvider } from '@/app/features/session-provider'
+import { SyncFavorites } from '@/app/features/sync-favorites'
+import { QueryProvider } from '@/app/shared/ui/query-provider'
+import { figtreeHeading, nunitoSans } from '@/config/fonts'
+import { routing } from '@/pkg/locale'
+import { cn } from '@/pkg/utils'
+
+import '@/config/styles/global.css'
 
 // interface
 interface IProps {
-  children: ReactNode;
-  params: Promise<{ locale: string }>;
+  children: ReactNode
+  params: Promise<{ locale: string }>
 }
 
 // static params
 export const generateStaticParams = async () => {
-  return routing.locales.map((locale) => ({ locale }));
-};
+  return routing.locales.map((locale) => ({ locale }))
+}
 
 // metadata
-export const generateMetadata = async ({
-  params,
-}: {
-  params: Promise<{ locale: string }>;
-}): Promise<Metadata> => {
-  const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "metadata" });
+export const generateMetadata = async ({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> => {
+  const { locale } = await params
+  const t = await getTranslations({ locale, namespace: 'metadata' })
 
-  const title = t("appName");
-  const description = t("appDescription");
+  const title = t('appName')
+  const description = t('appDescription')
 
   return {
     title: {
@@ -46,37 +47,43 @@ export const generateMetadata = async ({
       },
       description: description,
       siteName: title,
-      type: "website",
+      type: 'website',
     },
-  };
-};
+  }
+}
 
 // component
 const LocaleLayout: FC<Readonly<IProps>> = async (props: IProps) => {
-  const { children, params } = props;
+  const { children, params } = props
 
-  const { locale } = await params;
+  const { locale } = await params
 
   if (!hasLocale(routing.locales, locale)) {
-    notFound();
+    notFound()
   }
-  setRequestLocale(locale);
+  setRequestLocale(locale)
 
-  const messages = await getMessages();
+  const messages = await getMessages()
 
   // return
   return (
-    <>
-      <Provider>
-        <NextIntlClientProvider messages={messages}>
-          <SessionProvider>
-            <SyncProvider>{children}</SyncProvider>
-          </SessionProvider>
-        </NextIntlClientProvider>
-        <Toaster position="top-center" duration={3000} />
-      </Provider>
-    </>
-  );
-};
+    <html
+      lang={locale}
+      suppressHydrationWarning
+      className={cn('h-full', 'antialiased', 'font-sans', nunitoSans.variable, figtreeHeading.variable, 'dark')}
+    >
+      <body className='flex min-h-full flex-col' suppressHydrationWarning>
+        <QueryProvider>
+          <NextIntlClientProvider messages={messages}>
+            <SessionProvider>
+              <SyncFavorites>{children}</SyncFavorites>
+            </SessionProvider>
+          </NextIntlClientProvider>
+          <Toaster position='top-center' duration={3000} />
+        </QueryProvider>
+      </body>
+    </html>
+  )
+}
 
-export default LocaleLayout;
+export default LocaleLayout

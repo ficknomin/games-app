@@ -1,9 +1,13 @@
-import { Spinner } from "@/app/shared/ui/spinner";
+import { type FC } from 'react'
 
-export const LoadingState = () => {
+import { Spinner } from '@/app/shared/ui/spinner'
+
+interface IProps {}
+
+export const LoadingState: FC<Readonly<IProps>> = () => {
   return (
-    <div className="flex min-h-screen">
-      <Spinner className="animate-spin max-w-* mx-auto my-auto w-8 h-8" />
+    <div className='flex min-h-screen'>
+      <Spinner className='max-w-* mx-auto my-auto h-8 w-8 animate-spin' />
     </div>
-  );
-};
+  )
+}

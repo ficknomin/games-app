@@ -1,1 +1,1 @@
-export { useGenres } from "./genres.query";
+export { useGenres } from './genres.query'

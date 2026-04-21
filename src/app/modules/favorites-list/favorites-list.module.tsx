@@ -1,31 +1,51 @@
-"use client";
+'use client'
 
-import { useFavoritesStore } from "@/app/shared/hooks/use-favorites-store.hook";
-import { GameCard } from "@/app/widgets/game-card/index";
-import { useTranslations } from "next-intl";
+import { HeartOff } from 'lucide-react'
+import { useTranslations } from 'next-intl'
+import { type FC } from 'react'
 
-export const FavoritesList = () => {
-  const t = useTranslations("favorites");
-  const favorites = useFavoritesStore((state) => state.favorites);
-  const games = Object.values(favorites);
+import { useFavoritesStore } from '@/app/shared/hooks/use-favorites-store.hook'
+import { GameCard } from '@/app/widgets/game-card/index'
+
+interface IProps {}
+
+export const FavoritesList: FC<Readonly<IProps>> = () => {
+  const t = useTranslations('favorites')
+  const favorites = useFavoritesStore((state) => state.favorites)
+  const games = Object.values(favorites)
 
   return (
-    <div className="min-h-screen bg-background">
-      <main className="max-w-7xl mx-auto px-6 py-16">
-        <h1 className="text-3xl font-bold px-2 pb-5 md:ms-10 -mt-5">
-          {t("pageTitle")}
-        </h1>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 px-5 py-3">
-          {games.length === 0 && (
-            <div className="col-span-full text-center text-lg text-muted-foreground pt-11 pb-8">
-              {t("empty")}
-            </div>
-          )}
-          {games.map((game) => (
-            <GameCard key={game.id} game={game} />
-          ))}
-        </div>
+    <div className='bg-background min-h-screen'>
+      <main className='mx-auto max-w-7xl px-6 py-12 md:py-16'>
+        {/* Page header */}
+        <header className='mb-10 space-y-3'>
+          <div className='flex items-center gap-3'>
+            <span className='bg-foreground h-px w-8' />
+            <span className='text-muted-foreground text-[11px] font-medium tracking-[0.25em] uppercase'>
+              {t('pageKicker')}
+            </span>
+          </div>
+
+          <h1 className='font-heading text-4xl font-semibold tracking-tight sm:text-5xl'>{t('pageTitle')}</h1>
+
+          <p className='text-muted-foreground max-w-xl text-sm sm:text-base'>{t('pageSubtitle')}</p>
+        </header>
+
+        {/* Body */}
+        {games.length === 0 ? (
+          <div className='flex flex-col items-center justify-center gap-4 rounded-sm border border-dashed py-24'>
+            <HeartOff className='text-muted-foreground h-8 w-8' strokeWidth={1.25} />
+
+            <p className='text-muted-foreground max-w-sm text-center text-sm'>{t('empty')}</p>
+          </div>
+        ) : (
+          <div className='grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'>
+            {games.map((game) => (
+              <GameCard key={game.id} game={game} />
+            ))}
+          </div>
+        )}
       </main>
     </div>
-  );
-};
+  )
+}

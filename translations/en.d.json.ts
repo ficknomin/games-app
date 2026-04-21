@@ -30,6 +30,7 @@ declare const messages: {
     "gameDescription": "Games Hub. Game description for game: {name}"
   },
   "nav": {
+    "brand": "Games Hub",
     "home": "Home",
     "allGames": "All Games",
     "favorites": "Favorites"
@@ -41,12 +42,24 @@ declare const messages: {
     "signOut": "Sign out"
   },
   "home": {
+    "kicker": "A home for players",
     "title": "Games Hub",
-    "subtitle": "Explore and like your favorite games",
-    "exploreButton": "Explore games"
+    "subtitle": "A quiet shelf for every title you have ever loved. Browse a living library of games across every platform and keep a list of the ones worth returning to.",
+    "exploreButton": "Explore games",
+    "favoritesButton": "Your favorites",
+    "statLabel": "Titles catalogued",
+    "statValue": "1,000+"
   },
   "games": {
+    "pageKicker": "The library",
     "pageTitle": "All Games",
+    "pageSubtitle": "Browse the catalogue across every genre and platform.",
+    "filtersTitle": "Refine",
+    "filtersSubtitle": "Narrow the shelf",
+    "searchLabel": "Search",
+    "genreLabel": "Genre",
+    "platformLabel": "Platform",
+    "orderLabel": "Sort by",
     "searchTitle": "Search Games",
     "searchPlaceholder": "Search games...",
     "genrePlaceholder": "Select genre",
@@ -65,11 +78,15 @@ declare const messages: {
     "metacritic": "Metacritic"
   },
   "favorites": {
+    "pageKicker": "Your shelf",
     "pageTitle": "Favorite Games",
-    "empty": "You have no games added to favorites."
+    "pageSubtitle": "The games you have set aside to revisit.",
+    "empty": "Your shelf is empty. Bookmark a game from the library and it will appear here."
   },
   "login": {
+    "kicker": "Welcome back",
     "heading": "Sign in to your account",
+    "subheading": "Pick up where you left off.",
     "emailLabel": "Email address*",
     "emailPlaceholder": "Enter your email address",
     "passwordLabel": "Password*",
@@ -82,7 +99,9 @@ declare const messages: {
     "submitting": "Signing in..."
   },
   "register": {
+    "kicker": "New here",
     "heading": "Create an account",
+    "subheading": "Start a shelf of your own.",
     "usernameLabel": "Username*",
     "usernamePlaceholder": "Enter your username",
     "emailLabel": "Email address*",

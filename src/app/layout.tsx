@@ -1,26 +1,13 @@
-import { cn } from "@/app/shared/interfaces/utils";
-import { figtreeHeading, nunitoSans } from "@/config/fonts/font";
-import "@/config/styles/globals.css";
+import { type FC, type ReactNode } from 'react'
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  return (
-    <html
-      lang="en"
-      suppressHydrationWarning
-      className={cn(
-        "h-full",
-        "antialiased",
-        "font-sans",
-        nunitoSans.variable,
-        figtreeHeading.variable,
-        "dark",
-      )}
-    >
-      <body className="min-h-full flex flex-col">{children}</body>
-    </html>
-  );
+interface IProps {
+  children: ReactNode
 }
+
+const RootLayout: FC<Readonly<IProps>> = (props) => {
+  const { children } = props
+
+  return children
+}
+
+export default RootLayout

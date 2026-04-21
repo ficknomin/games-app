@@ -1,56 +1,48 @@
-import {
-  FilterTypes,
-  GamesListFilters,
-} from "@/app/modules/games-list/games-list.module";
-import { Game, GamesResponse } from "@/app/entities/models/game.model";
-import { createClient } from "@/config/db/env.client";
+import { FilterTypes, GamesListFilters } from '@/app/entities/models'
+import { Game, GamesResponse } from '@/app/entities/models/game.model'
+import { createClient } from '@/pkg/supabase/client'
 
-export const fetchGames = async (
-  filters: GamesListFilters,
-): Promise<GamesResponse> => {
-  const PAGE_SIZE = 10;
-  const from = (filters.page - 1) * PAGE_SIZE;
-  const to = from + PAGE_SIZE - 1;
-  const supabase = createClient();
+export const fetchGames = async (filters: GamesListFilters): Promise<GamesResponse> => {
+  const PAGE_SIZE = 10
+  const from = (filters.page - 1) * PAGE_SIZE
+  const to = from + PAGE_SIZE - 1
+  const supabase = createClient()
 
-  let query = supabase
-    .from("games")
-    .select("*", { count: "exact" })
-    .range(from, to);
+  let query = supabase.from('games').select('*', { count: 'exact' }).range(from, to)
 
   if (filters.search?.trim()) {
-    query = query.ilike("name", `%${filters.search}%`);
+    query = query.ilike('name', `%${filters.search}%`)
   }
 
   if (filters.genre) {
-    query = query.contains("genres", [filters.genre]);
+    query = query.contains('genres', [filters.genre])
   }
 
   if (filters.platform) {
-    query = query.contains("platforms", [filters.platform]);
+    query = query.contains('platforms', [filters.platform])
   }
 
-  if (filters.filter !== "") {
+  if (filters.filter !== '') {
     switch (filters.filter) {
       case FilterTypes.RATINGASC:
-        query = query.order("rating", { ascending: true });
-        break;
+        query = query.order('rating', { ascending: true })
+        break
       case FilterTypes.RATINGDESC:
-        query = query.order("rating", { ascending: false });
-        break;
+        query = query.order('rating', { ascending: false })
+        break
       case FilterTypes.YEARASC:
-        query = query.order("released", { ascending: true });
-        break;
+        query = query.order('released', { ascending: true })
+        break
       case FilterTypes.YEARDESC:
-        query = query.order("released", { ascending: false });
-        break;
+        query = query.order('released', { ascending: false })
+        break
     }
   }
 
-  const { data, error, count } = await query;
+  const { data, error, count } = await query
 
   if (error) {
-    throw new Error(`Failed to fetch games: ${error.message}`);
+    throw new Error(`Failed to fetch games: ${error.message}`)
   }
 
   return {
@@ -58,43 +50,39 @@ export const fetchGames = async (
     count: count ?? 0,
     next: count !== null ? to + 1 < count : false,
     previous: filters.page > 1,
-  };
-};
+  }
+}
 
 export const fetchGame = async (id: string): Promise<Game> => {
-  const supabase = createClient();
+  const supabase = createClient()
 
-  const query = supabase.from("games").select("*").eq("id", id);
+  const query = supabase.from('games').select('*').eq('id', id)
 
-  const { data, error } = await query;
+  const { data, error } = await query
 
   if (error) {
-    throw new Error(`Failed to fetch games: ${error}`);
+    throw new Error(`Failed to fetch games: ${error}`)
   }
 
-  return data[0];
-};
+  return data[0]
+}
 
 export const fetchGenres = async () => {
-  const response = await fetch(
-    `https://api.rawg.io/api/genres?key=${process.env.NEXT_PUBLIC_RAWG_API_KEY}`,
-  );
+  const response = await fetch(`https://api.rawg.io/api/genres?key=${process.env.NEXT_PUBLIC_RAWG_API_KEY}`)
 
   if (!response.ok) {
-    throw new Error(`Failed to fetch games: ${response.statusText}`);
+    throw new Error(`Failed to fetch games: ${response.statusText}`)
   }
 
-  return response.json();
-};
+  return response.json()
+}
 
 export const fetchPlatforms = async () => {
-  const response = await fetch(
-    `https://api.rawg.io/api/platforms?key=${process.env.NEXT_PUBLIC_RAWG_API_KEY}`,
-  );
+  const response = await fetch(`https://api.rawg.io/api/platforms?key=${process.env.NEXT_PUBLIC_RAWG_API_KEY}`)
 
   if (!response.ok) {
-    throw new Error(`Failed to fetch platforms: ${response.statusText}`);
+    throw new Error(`Failed to fetch platforms: ${response.statusText}`)
   }
 
-  return response.json();
-};
+  return response.json()
+}

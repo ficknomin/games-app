@@ -1,14 +1,15 @@
-import { NavBar } from "@/app/widgets/nav-bar";
+import { type FC, type ReactNode } from 'react'
 
-export default function Layout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  return (
-    <div className="min-h-full w-full flex flex-col">
-      <NavBar />
-      {children}
-    </div>
-  );
+import { PageShell } from '@/app/widgets/page-shell'
+
+interface IProps {
+  children: ReactNode
 }
+
+const LoginLayout: FC<Readonly<IProps>> = (props) => {
+  const { children } = props
+
+  return <PageShell>{children}</PageShell>
+}
+
+export default LoginLayout

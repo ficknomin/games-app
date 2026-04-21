@@ -1,15 +1,16 @@
-import { fetchGenres } from "@/app/entities/api/games/games.api";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery } from '@tanstack/react-query'
+
+import { fetchGenres } from '@/app/entities/api/games/games.api'
 
 type GenresResponse = {
-  id: string;
-  name: string;
-  slug: string;
-};
+  id: string
+  name: string
+  slug: string
+}
 
 export const useGenres = () => {
   return useQuery({
-    queryKey: ["genres"],
+    queryKey: ['genres'],
     queryFn: fetchGenres,
 
     select: (data) =>
@@ -18,5 +19,5 @@ export const useGenres = () => {
         label: genre.name,
         value: genre.slug,
       })),
-  });
-};
+  })
+}
