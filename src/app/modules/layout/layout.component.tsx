@@ -2,7 +2,6 @@ import { type FC, type ReactNode } from 'react'
 
 import { NavBarComponent } from '@/app/widgets/nav-bar'
 
-
 // interface
 interface IProps {
   children: ReactNode

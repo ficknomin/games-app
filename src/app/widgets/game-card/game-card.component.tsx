@@ -31,7 +31,7 @@ export const GameCardComponent: FC<Readonly<IProps>> = (props) => {
     >
       {/* Cover */}
       <div className='relative flex aspect-video w-full overflow-hidden'>
-        <div className='bg-muted animate-pulse absolute inset-0' />
+        <div className='bg-muted absolute inset-0 animate-pulse' />
         <Image
           src={game.background_image}
           alt={game.name}

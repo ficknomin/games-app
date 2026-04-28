@@ -18,7 +18,6 @@ export const generateMetadata = async (props: IProps): Promise<Metadata> => {
   }
 }
 
-
 const Page: NextPage<Readonly<IProps>> = () => {
   return <LoginModule />
 }

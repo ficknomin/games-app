@@ -15,5 +15,4 @@ const shimmerSvg = (w: number, h: number) => `
   <animate xlink:href="#r" attributeName="x" from="-${w}" to="${w}" dur="1.2s" repeatCount="indefinite" />
 </svg>`
 
-export const shimmerDataUrl = (w: number, h: number) =>
-  `data:image/svg+xml;base64,${toBase64(shimmerSvg(w, h))}`
+export const shimmerDataUrl = (w: number, h: number) => `data:image/svg+xml;base64,${toBase64(shimmerSvg(w, h))}`
