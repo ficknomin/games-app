@@ -1,13 +1,11 @@
-import { type FC } from 'react'
+import { NextPage } from 'next'
 
-import { GamesList } from '@/app/modules/games-list'
-
-export const revalidate = 3600
+import { GamesListModule } from '@/app/modules/games-list'
 
 interface IProps {}
 
-const GamesPage: FC<Readonly<IProps>> = () => {
-  return <GamesList />
+const Page: NextPage<Readonly<IProps>> = () => {
+  return <GamesListModule />
 }
 
-export default GamesPage
+export default Page

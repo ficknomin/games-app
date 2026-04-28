@@ -1,1 +1,1 @@
-export { GamesList } from './games-list.module'
+export { GamesListModule } from './games-list.module'

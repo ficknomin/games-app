@@ -1,7 +1,7 @@
 import { getTranslations } from 'next-intl/server'
 import { type FC } from 'react'
 
-import { LoginForm } from '@/app/features/auth'
+import { LoginFormComponent } from '@/app/features/auth'
 import { Card } from '@/app/shared/ui/card'
 
 interface IProps {}
@@ -36,7 +36,7 @@ export const LoginModule: FC<Readonly<IProps>> = async () => {
         </div>
 
         {/* Form */}
-        <LoginForm />
+        <LoginFormComponent />
       </Card>
     </div>
   )

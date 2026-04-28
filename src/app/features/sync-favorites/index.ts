@@ -1,1 +1,1 @@
-export { SyncFavorites } from './sync-favorites.component'
+export { SyncFavoritesComponent } from './sync-favorites.component'

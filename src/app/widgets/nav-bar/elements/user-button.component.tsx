@@ -19,9 +19,10 @@ import { useRouter } from '@/pkg/locale'
 
 interface IProps {}
 
-export const UserButton: FC<Readonly<IProps>> = () => {
+export const UserButtonComponent: FC<Readonly<IProps>> = () => {
   const t = useTranslations('userMenu')
   const user = useSessionStore((s) => s.user)
+  const clearSession = useSessionStore((s) => s.clearSession)
   const router = useRouter()
 
   return (
@@ -32,15 +33,15 @@ export const UserButton: FC<Readonly<IProps>> = () => {
         </Button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent className='w-40 rounded-xs' align='start'>
+      <DropdownMenuContent className='w-40 rounded-xs'>
         <DropdownMenuGroup>
           <DropdownMenuLabel>{t('myAccount')}</DropdownMenuLabel>
 
           {user ? (
             <DropdownMenuItem
               onClick={() => {
+                clearSession()
                 signOut()
-                router.push('/')
               }}
               className='hover:cursor-pointer'
             >

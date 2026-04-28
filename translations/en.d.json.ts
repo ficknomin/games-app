@@ -31,6 +31,7 @@ declare const messages: {
   },
   "nav": {
     "brand": "Games Hub",
+    "navigation": "Navigation",
     "home": "Home",
     "allGames": "All Games",
     "favorites": "Favorites"
@@ -75,7 +76,8 @@ declare const messages: {
     "searching": "Searching...",
     "empty": "No games found matching your criteria.",
     "tba": "TBA",
-    "metacritic": "Metacritic"
+    "metacritic": "Metacritic",
+    "screenshots": "Screenshots"
   },
   "favorites": {
     "pageKicker": "Your shelf",
@@ -136,7 +138,8 @@ declare const messages: {
     "sessionFailed": "Session creation failed",
     "insertFailed": "Failed to create account",
     "lookupFailed": "Database lookup failed",
-    "unexpected": "Something went wrong, please try again"
+    "unexpected": "Something went wrong, please try again",
+    "rateLimited": "Too many attempts. Please wait 5 minutes before trying again."
   },
   "state": {
     "loading": "Loading...",

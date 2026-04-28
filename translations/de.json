@@ -28,6 +28,7 @@
   },
   "nav": {
     "brand": "Games Hub",
+    "navigation": "Navigation",
     "home": "Startseite",
     "allGames": "Alle Spiele",
     "favorites": "Favoriten"
@@ -72,7 +73,8 @@
     "searching": "Suche läuft...",
     "empty": "Keine Spiele gefunden, die deinen Kriterien entsprechen.",
     "tba": "Offen",
-    "metacritic": "Metacritic"
+    "metacritic": "Metacritic",
+    "screenshots": "Screenshots"
   },
   "favorites": {
     "pageKicker": "Dein Regal",
@@ -133,7 +135,8 @@
     "sessionFailed": "Sitzung konnte nicht erstellt werden",
     "insertFailed": "Konto konnte nicht erstellt werden",
     "lookupFailed": "Datenbankabfrage fehlgeschlagen",
-    "unexpected": "Etwas ist schiefgelaufen, bitte versuche es erneut"
+    "unexpected": "Etwas ist schiefgelaufen, bitte versuche es erneut",
+    "rateLimited": "Zu viele Versuche. Bitte warte 5 Minuten, bevor du es erneut versuchst."
   },
   "state": {
     "loading": "Wird geladen...",

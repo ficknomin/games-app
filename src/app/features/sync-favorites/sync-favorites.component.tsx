@@ -8,7 +8,7 @@ interface IProps {
   children: ReactNode
 }
 
-export const SyncFavorites: FC<Readonly<IProps>> = (props) => {
+export const SyncFavoritesComponent: FC<Readonly<IProps>> = (props) => {
   const { children } = props
   useSyncFavorites()
 

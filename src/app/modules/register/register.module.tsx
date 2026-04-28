@@ -1,7 +1,7 @@
 import { getTranslations } from 'next-intl/server'
 import { type FC } from 'react'
 
-import { RegisterForm } from '@/app/features/auth'
+import { RegisterFormComponent } from '@/app/features/auth'
 import { Card } from '@/app/shared/ui/card'
 
 interface IProps {}
@@ -36,7 +36,7 @@ export const RegisterModule: FC<Readonly<IProps>> = async () => {
         </div>
 
         {/* Form */}
-        <RegisterForm />
+        <RegisterFormComponent />
       </Card>
     </div>
   )

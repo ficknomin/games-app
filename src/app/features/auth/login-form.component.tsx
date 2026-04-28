@@ -13,15 +13,16 @@ import { Button } from '@/app/shared/ui/button'
 import { Checkbox } from '@/app/shared/ui/checkbox'
 import { Input } from '@/app/shared/ui/input'
 import { Label } from '@/app/shared/ui/label'
+import { Spinner } from '@/app/shared/ui/spinner'
 import { useRouter } from '@/pkg/locale'
-import { cn } from '@/pkg/utils'
+import { cn } from '@/utils/cn'
 
 import { createLoginSchema, LoginFormData } from './auth.schema'
 import { signIn } from './auth.service'
 
 interface IProps {}
 
-export const LoginForm: FC<Readonly<IProps>> = () => {
+export const LoginFormComponent: FC<Readonly<IProps>> = () => {
   const t = useTranslations('login')
   const tValidation = useTranslations('validation')
   const tAuthErrors = useTranslations('authErrors')
@@ -116,6 +117,7 @@ export const LoginForm: FC<Readonly<IProps>> = () => {
       </div>
 
       <Button className={cn('w-full rounded-sm', isSubmitting && 'opacity-50')} type='submit' disabled={isSubmitting}>
+        {isSubmitting && <Spinner />}
         {isSubmitting ? t('submitting') : t('submit')}
       </Button>
     </form>

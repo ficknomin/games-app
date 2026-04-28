@@ -5,12 +5,12 @@ import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server
 import { type FC, type ReactNode } from 'react'
 import { Toaster } from 'sonner'
 
-import { SessionProvider } from '@/app/features/session-provider'
-import { SyncFavorites } from '@/app/features/sync-favorites'
+import { SessionProviderComponent } from '@/app/features/session-provider'
+import { SyncFavoritesComponent } from '@/app/features/sync-favorites'
 import { QueryProvider } from '@/app/shared/ui/query-provider'
 import { figtreeHeading, nunitoSans } from '@/config/fonts'
 import { routing } from '@/pkg/locale'
-import { cn } from '@/pkg/utils'
+import { cn } from '@/utils/cn'
 
 import '@/config/styles/global.css'
 
@@ -26,7 +26,8 @@ export const generateStaticParams = async () => {
 }
 
 // metadata
-export const generateMetadata = async ({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> => {
+export const generateMetadata = async (props: IProps): Promise<Metadata> => {
+  const { params } = props
   const { locale } = await params
   const t = await getTranslations({ locale, namespace: 'metadata' })
 
@@ -75,9 +76,9 @@ const LocaleLayout: FC<Readonly<IProps>> = async (props: IProps) => {
       <body className='flex min-h-full flex-col' suppressHydrationWarning>
         <QueryProvider>
           <NextIntlClientProvider messages={messages}>
-            <SessionProvider>
-              <SyncFavorites>{children}</SyncFavorites>
-            </SessionProvider>
+            <SessionProviderComponent>
+              <SyncFavoritesComponent>{children}</SyncFavoritesComponent>
+            </SessionProviderComponent>
           </NextIntlClientProvider>
           <Toaster position='top-center' duration={3000} />
         </QueryProvider>

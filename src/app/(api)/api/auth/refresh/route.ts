@@ -2,7 +2,7 @@ import crypto from 'crypto'
 import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
 
-import { signAccessToken } from '@/pkg/jwt'
+import { jwt, SESSION_HINT_COOKIE } from '@/pkg/jwt'
 import { createClient } from '@/pkg/supabase/server'
 
 export async function POST() {
@@ -10,6 +10,7 @@ export async function POST() {
   const refreshToken = cookieStore.get('refresh_token')?.value
 
   if (!refreshToken) {
+    cookieStore.delete(SESSION_HINT_COOKIE)
     return NextResponse.json({ success: false }, { status: 401 })
   }
 
@@ -26,6 +27,7 @@ export async function POST() {
 
   if (!session || !session.users) {
     cookieStore.delete('refresh_token')
+    cookieStore.delete(SESSION_HINT_COOKIE)
     return NextResponse.json({ success: false }, { status: 401 })
   }
 
@@ -35,10 +37,18 @@ export async function POST() {
     username: string
   }
 
-  const accessToken = await signAccessToken({
+  const accessToken = await jwt.signAccessToken({
     userId: user.id,
     email: user.email,
     username: user.username,
+  })
+
+  cookieStore.set(SESSION_HINT_COOKIE, '1', {
+    httpOnly: false,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    expires: new Date(session.expires_at),
+    path: '/',
   })
 
   return NextResponse.json({

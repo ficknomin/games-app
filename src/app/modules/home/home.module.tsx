@@ -9,7 +9,7 @@ import { useRouter } from '@/pkg/locale'
 
 interface IProps {}
 
-export const HomePage: FC<Readonly<IProps>> = () => {
+export const HomeModule: FC<Readonly<IProps>> = () => {
   const t = useTranslations('home')
   const router = useRouter()
 

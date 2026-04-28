@@ -5,11 +5,11 @@ import { useTranslations } from 'next-intl'
 import { type FC } from 'react'
 
 import { useFavoritesStore } from '@/app/shared/hooks/use-favorites-store.hook'
-import { GameCard } from '@/app/widgets/game-card/index'
+import { GameCardComponent } from '@/app/widgets/game-card'
 
 interface IProps {}
 
-export const FavoritesList: FC<Readonly<IProps>> = () => {
+export const FavoritesListModule: FC<Readonly<IProps>> = () => {
   const t = useTranslations('favorites')
   const favorites = useFavoritesStore((state) => state.favorites)
   const games = Object.values(favorites)
@@ -41,7 +41,7 @@ export const FavoritesList: FC<Readonly<IProps>> = () => {
         ) : (
           <div className='grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'>
             {games.map((game) => (
-              <GameCard key={game.id} game={game} />
+              <GameCardComponent key={game.id} game={game} />
             ))}
           </div>
         )}

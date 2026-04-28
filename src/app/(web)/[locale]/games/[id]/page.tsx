@@ -1,21 +1,29 @@
-import { Metadata } from 'next'
+import { Metadata, NextPage } from 'next'
 import { notFound } from 'next/navigation'
-import { getTranslations } from 'next-intl/server'
+import { getTranslations, setRequestLocale } from 'next-intl/server'
+import { cache } from 'react'
 
 import { fetchGame } from '@/app/entities/api/games'
-import { GameDetails } from '@/app/widgets/game-details'
+import { GameDetailsComponent } from '@/app/widgets/game-details'
 
-type GamePageProps = {
+export const revalidate = 3600
+
+export const generateStaticParams = async () => []
+
+const getGame = cache(fetchGame)
+
+interface IProps {
   params: Promise<{
     id: string
     locale: string
   }>
 }
 
-export async function generateMetadata({ params }: GamePageProps): Promise<Metadata> {
+export const generateMetadata = async (props: IProps): Promise<Metadata> => {
+  const { params } = props
   const { id, locale } = await params
   const t = await getTranslations({ locale, namespace: 'metadata' })
-  const game = await fetchGame(id)
+  const game = await getGame(id)
 
   if (!game) {
     return { title: t('gameNotFound') }
@@ -31,15 +39,17 @@ export async function generateMetadata({ params }: GamePageProps): Promise<Metad
   }
 }
 
-const GamePage = async ({ params }: GamePageProps) => {
-  const { id } = await params
+const Page: NextPage<Readonly<IProps>> = async (props) => {
+  const { params } = props
+  const { id, locale } = await params
+  setRequestLocale(locale)
 
-  const game = await fetchGame(id)
+  const game = await getGame(id)
   if (!game) {
     notFound()
   }
 
-  return <GameDetails id={id} />
+  return <GameDetailsComponent id={id} />
 }
 
-export default GamePage
+export default Page

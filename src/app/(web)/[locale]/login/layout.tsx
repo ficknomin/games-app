@@ -1,15 +1,15 @@
 import { type FC, type ReactNode } from 'react'
 
-import { PageShell } from '@/app/widgets/page-shell'
+import { LayoutComponent } from '@/app/modules/layout'
 
 interface IProps {
   children: ReactNode
 }
 
-const LoginLayout: FC<Readonly<IProps>> = (props) => {
+const PublicLayoutComponent: FC<Readonly<IProps>> = (props) => {
   const { children } = props
 
-  return <PageShell>{children}</PageShell>
+  return <LayoutComponent type='public'>{children}</LayoutComponent>
 }
 
-export default LoginLayout
+export default PublicLayoutComponent

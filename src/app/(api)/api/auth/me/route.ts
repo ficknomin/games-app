@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-import { verifyAccessToken } from '@/pkg/jwt'
+import { jwt } from '@/pkg/jwt'
 
 export async function GET(req: NextRequest) {
   const authHeader = req.headers.get('authorization')
@@ -10,7 +10,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json(null, { status: 401 })
   }
 
-  const payload = await verifyAccessToken(token)
+  const payload = await jwt.verifyAccessToken(token)
 
   if (!payload) {
     return NextResponse.json(null, { status: 401 })

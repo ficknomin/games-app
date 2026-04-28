@@ -1,1 +1,1 @@
-export { SessionProvider } from './session-provider.component'
+export { SessionProviderComponent } from './session-provider.component'

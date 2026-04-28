@@ -28,6 +28,7 @@ export type Game = {
   metacritic: string
   genres: string[]
   platforms: string[]
+  screenshots?: string[]
 
   parent_platforms: { platform: Platform }[]
 }

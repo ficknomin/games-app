@@ -4,7 +4,7 @@ import { CheckIcon, ChevronRightIcon } from 'lucide-react'
 import { DropdownMenu as DropdownMenuPrimitive } from 'radix-ui'
 import * as React from 'react'
 
-import { cn } from '@/pkg/utils'
+import { cn } from '@/utils/cn'
 
 function DropdownMenu({ ...props }: React.ComponentProps<typeof DropdownMenuPrimitive.Root>) {
   return <DropdownMenuPrimitive.Root data-slot='dropdown-menu' {...props} />
@@ -20,7 +20,7 @@ function DropdownMenuTrigger({ ...props }: React.ComponentProps<typeof DropdownM
 
 function DropdownMenuContent({
   className,
-  align = 'start',
+  align = 'end',
   sideOffset = 4,
   ...props
 }: React.ComponentProps<typeof DropdownMenuPrimitive.Content>) {

@@ -7,19 +7,22 @@ import { type FC } from 'react'
 import { useGame } from '@/app/entities/api/games'
 import { Badge } from '@/app/shared/ui/badge'
 import { ErrorState } from '@/app/shared/ui/error-state'
-import { LoadingState } from '@/app/shared/ui/loading-state'
+import { shimmerDataUrl } from '@/utils/shimmer'
+
+import { GameDetailsSkeletonComponent } from './game-details-skeleton.component'
+import { GameScreenshotsComponent } from './game-screenshots.component'
 
 interface IProps {
   id: string
 }
 
-export const GameDetails: FC<Readonly<IProps>> = (props) => {
+export const GameDetailsComponent: FC<Readonly<IProps>> = (props) => {
   const { id } = props
   const t = useTranslations('games')
   const { isLoading, isError, data, error, refetch } = useGame(id)
 
   if (isLoading) {
-    return <LoadingState />
+    return <GameDetailsSkeletonComponent />
   }
 
   if (isError) {
@@ -29,11 +32,20 @@ export const GameDetails: FC<Readonly<IProps>> = (props) => {
   if (!data) return null
 
   return (
-    <div className='bg-background mt-12 flex flex-1 flex-col items-center justify-center px-4'>
-      <div className='w-full max-w-4xl space-y-4'>
+    <div className='bg-background mt-12 flex flex-1 flex-col items-center px-4 pb-16'>
+      <div className='w-full max-w-4xl space-y-10'>
+        {/* Hero card */}
         <div className='bg-card overflow-hidden rounded-sm shadow-md'>
           <div className='relative flex h-96 w-full'>
-            <Image src={data.background_image} alt={data.name} fill className='object-cover' priority />
+            <Image
+              src={data.background_image}
+              alt={data.name}
+              fill
+              priority
+              placeholder='blur'
+              blurDataURL={shimmerDataUrl(896, 384)}
+              className='object-cover'
+            />
 
             <div className='from-card via-card/31 absolute inset-0 bg-linear-to-t to-transparent' />
 
@@ -73,6 +85,20 @@ export const GameDetails: FC<Readonly<IProps>> = (props) => {
             </div>
           </div>
         </div>
+
+        {/* Screenshots */}
+        {(data.screenshots?.length ?? 0) > 0 && (
+          <div className='space-y-4'>
+            <div className='flex items-center gap-3'>
+              <span className='bg-foreground h-px w-8' />
+              <span className='text-muted-foreground text-[11px] font-medium tracking-[0.25em] uppercase'>
+                {t('screenshots')}
+              </span>
+            </div>
+
+            <GameScreenshotsComponent screenshots={data.screenshots!} />
+          </div>
+        )}
       </div>
     </div>
   )

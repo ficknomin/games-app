@@ -1,10 +1,14 @@
-import { Metadata } from 'next'
+import { Metadata, NextPage } from 'next'
 import { getTranslations } from 'next-intl/server'
-import { type FC } from 'react'
 
 import { LoginModule } from '@/app/modules/login'
 
-export const generateMetadata = async ({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> => {
+interface IProps {
+  params: Promise<{ locale: string }>
+}
+
+export const generateMetadata = async (props: IProps): Promise<Metadata> => {
+  const { params } = props
   const { locale } = await params
   const t = await getTranslations({ locale, namespace: 'metadata.login' })
 
@@ -14,10 +18,9 @@ export const generateMetadata = async ({ params }: { params: Promise<{ locale: s
   }
 }
 
-interface IProps {}
 
-const LoginPage: FC<Readonly<IProps>> = () => {
+const Page: NextPage<Readonly<IProps>> = () => {
   return <LoginModule />
 }
 
-export default LoginPage
+export default Page

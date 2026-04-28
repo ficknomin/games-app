@@ -1,11 +1,16 @@
-import { Metadata } from 'next'
+import { Metadata, NextPage } from 'next'
 import { getTranslations } from 'next-intl/server'
-import { type FC } from 'react'
 
-import { FavoritesList } from '@/app/modules/favorites-list'
+import { FavoritesListModule } from '@/app/modules/favorites-list'
 
-export const generateMetadata = async ({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> => {
+interface IProps {
+  params: Promise<{ locale: string }>
+}
+
+export const generateMetadata = async (props: IProps): Promise<Metadata> => {
+  const { params } = props
   const { locale } = await params
+
   const t = await getTranslations({
     locale,
     namespace: 'metadata.favorites',
@@ -17,10 +22,8 @@ export const generateMetadata = async ({ params }: { params: Promise<{ locale: s
   }
 }
 
-interface IProps {}
-
-const FavoritesPage: FC<Readonly<IProps>> = () => {
-  return <FavoritesList />
+const Page: NextPage<Readonly<IProps>> = () => {
+  return <FavoritesListModule />
 }
 
-export default FavoritesPage
+export default Page

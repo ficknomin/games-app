@@ -10,7 +10,7 @@
     "prettier": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css,scss}\"",
     "type-check": "tsc --noEmit",
     "format": "yarn run type-check && yarn run lint && yarn run prettier",
-    "seed": "tsx scripts/fetchGames.ts"
+    "seed": "tsx scripts/seed-games.script.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -24,6 +24,7 @@
     "clsx": "^2.1.1",
     "crypto": "^1.0.1",
     "dotenv": "^17.3.1",
+    "embla-carousel-react": "^8.6.0",
     "jose": "^6.2.2",
     "ky": "^2.0.2",
     "lucide-react": "^1.7.0",

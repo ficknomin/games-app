@@ -2,11 +2,12 @@
 
 import bcrypt from 'bcrypt'
 import crypto from 'crypto'
-import { cookies } from 'next/headers'
+import { cookies, headers } from 'next/headers'
 import { getLocale } from 'next-intl/server'
 
-import { JWT_CONFIG, signAccessToken } from '@/pkg/jwt'
+import { jwt, JWT_CONFIG, SESSION_HINT_COOKIE } from '@/pkg/jwt'
 import { redirect } from '@/pkg/locale'
+import { checkRateLimit } from '@/pkg/rate-limit'
 import { createServerClient as createClient } from '@/pkg/supabase'
 
 import { LoginFormData, RegisterFormData } from './auth.schema'
@@ -17,6 +18,7 @@ export type AuthErrorCode =
   | 'sessionFailed'
   | 'insertFailed'
   | 'lookupFailed'
+  | 'rateLimited'
   | 'unexpected'
 
 type AuthData = {
@@ -26,8 +28,19 @@ type AuthData = {
 
 export type AuthResult = { success: true; data: AuthData } | { success: false; code: AuthErrorCode }
 
+const RATE_LIMIT = { limit: 3, windowMs: 5 * 60 * 1000 } as const
+
+async function getClientIp(): Promise<string> {
+  const h = await headers()
+  return h.get('x-forwarded-for')?.split(',')[0].trim() ?? h.get('x-real-ip') ?? 'unknown'
+}
+
 export async function signUp(data: RegisterFormData): Promise<AuthResult> {
   try {
+    const ip = await getClientIp()
+    const { allowed } = checkRateLimit(`signup:${ip}`, RATE_LIMIT.limit, RATE_LIMIT.windowMs)
+    if (!allowed) return { success: false, code: 'rateLimited' }
+
     const supabaseClient = await createClient()
 
     const { data: returnUser, error: lookupError } = await supabaseClient
@@ -81,9 +94,16 @@ export async function signUp(data: RegisterFormData): Promise<AuthResult> {
       expires: expiresAt,
       path: '/',
     })
+    cookieStore.set(SESSION_HINT_COOKIE, '1', {
+      httpOnly: false,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      expires: expiresAt,
+      path: '/',
+    })
 
     // Access token returned to client
-    const accessToken = await signAccessToken({
+    const accessToken = await jwt.signAccessToken({
       userId: newUser.id,
       email: newUser.email,
       username: newUser.username,
@@ -107,6 +127,10 @@ export async function signUp(data: RegisterFormData): Promise<AuthResult> {
 
 export async function signIn(data: LoginFormData): Promise<AuthResult> {
   try {
+    const ip = await getClientIp()
+    const { allowed } = checkRateLimit(`signin:${ip}`, RATE_LIMIT.limit, RATE_LIMIT.windowMs)
+    if (!allowed) return { success: false, code: 'rateLimited' }
+
     const supabaseClient = await createClient()
 
     const { data: user, error: lookupError } = await supabaseClient
@@ -149,9 +173,16 @@ export async function signIn(data: LoginFormData): Promise<AuthResult> {
       expires: expiresAt,
       path: '/',
     })
+    cookieStore.set(SESSION_HINT_COOKIE, '1', {
+      httpOnly: false,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      expires: expiresAt,
+      path: '/',
+    })
 
     // Access token (returned to client)
-    const accessToken = await signAccessToken({
+    const accessToken = await jwt.signAccessToken({
       userId: user.id,
       email: user.email,
       username: user.username,
@@ -205,5 +236,6 @@ export async function signOut() {
   }
 
   cookieStore.delete('refresh_token')
+  cookieStore.delete(SESSION_HINT_COOKIE)
   redirect({ href: '/login', locale: await getLocale() })
 }

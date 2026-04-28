@@ -1,58 +1,29 @@
-'use server'
+import ky from 'ky'
 
 import { FavoriteGame } from '@/app/entities/models/favorite.model'
-import { getSessionUserId } from '@/app/features/auth/auth.service'
-import { createClient } from '@/pkg/supabase/server'
+import { useSessionStore } from '@/app/shared/store/session.store'
 
-export const fetchFavoritesDB = async () => {
-  const userId = await getSessionUserId()
-  if (!userId) return []
-
-  const supabase = await createClient()
-  const { data, error } = await supabase.from('favorites').select('game_id').eq('user_id', userId)
-
-  if (error) throw error
-  return data
+const authHeader = (): Record<string, string> => {
+  const token = useSessionStore.getState().accessToken
+  return token ? { Authorization: `Bearer ${token}` } : {}
 }
 
-export const addFavoriteDB = async (gameId: number) => {
-  const userId = await getSessionUserId()
-  if (!userId) return
-
-  const supabase = await createClient()
-  const { error } = await supabase.from('favorites').insert({ user_id: userId, game_id: gameId })
-
-  if (error) throw error
+export const fetchFavoritesDB = async (): Promise<{ game_id: number }[]> => {
+  return ky.get('/api/favorites', { headers: authHeader() }).json()
 }
 
-export const removeFavoriteDB = async (gameId: number) => {
-  const userId = await getSessionUserId()
-  if (!userId) return
-
-  const supabase = await createClient()
-  const { error } = await supabase.from('favorites').delete().eq('user_id', userId).eq('game_id', gameId)
-
-  if (error) throw error
+export const addFavoriteDB = async (gameId: number): Promise<void> => {
+  await ky.post('/api/favorites', { headers: authHeader(), json: { gameId } })
 }
 
-export const syncFavoritesOnLogin = async (localFavorites: FavoriteGame[]) => {
-  const userId = await getSessionUserId()
-  if (!userId) return []
+export const removeFavoriteDB = async (gameId: number): Promise<void> => {
+  await ky.delete('/api/favorites', { headers: authHeader(), json: { gameId } })
+}
 
-  const supabase = await createClient()
-  const { data: dbFavorites, error } = await supabase.from('favorites').select('game_id').eq('user_id', userId)
-
-  if (error) throw error
-
-  const dbIds = new Set(dbFavorites.map((f) => f.game_id))
-  const localIds = new Set(localFavorites.map((l) => l.id))
-
-  const toInsert = localFavorites.filter((f) => !dbIds.has(f.id)).map((f) => ({ user_id: userId, game_id: f.id }))
-
-  if (toInsert.length > 0) {
-    const { error: insertError } = await supabase.from('favorites').insert(toInsert)
-    if (insertError) throw insertError
-  }
-
-  return Array.from(new Set([...dbIds, ...localIds]))
+export const syncFavoritesOnLogin = async (localFavorites: FavoriteGame[]): Promise<number[]> => {
+  const localIds = localFavorites.map((f) => f.id)
+  const { mergedIds } = await ky
+    .post('/api/favorites/sync', { headers: authHeader(), json: { localIds } })
+    .json<{ mergedIds: number[] }>()
+  return mergedIds
 }

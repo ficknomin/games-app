@@ -12,11 +12,11 @@ import {
 } from '@/app/shared/ui/navigation-menu'
 import { Link } from '@/pkg/locale'
 
-import { LocaleSwitcher, UserButton } from './elements'
+import { LocaleSwitcherComponent, MobileMenuComponent, UserButtonComponent } from './elements'
 
 interface IProps {}
 
-export const NavBar: FC<Readonly<IProps>> = () => {
+export const NavBarComponent: FC<Readonly<IProps>> = () => {
   const t = useTranslations('nav')
 
   return (
@@ -24,13 +24,11 @@ export const NavBar: FC<Readonly<IProps>> = () => {
       <div className='mx-auto flex h-16 max-w-7xl items-center justify-between gap-6 px-6'>
         {/* Brand */}
         <Link href='/' className='group flex items-center gap-2 rounded-sm'>
-          <span className='font-heading hidden text-sm font-semibold tracking-[0.18em] uppercase sm:inline'>
-            {t('brand')}
-          </span>
+          <span className='font-heading text-sm font-semibold tracking-[0.18em] uppercase'>{t('brand')}</span>
         </Link>
 
-        {/* Navigation */}
-        <NavigationMenu>
+        {/* Desktop Navigation */}
+        <NavigationMenu className='hidden md:flex'>
           <NavigationMenuList className='flex items-center justify-start gap-1'>
             <NavigationMenuItem>
               <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
@@ -58,10 +56,16 @@ export const NavBar: FC<Readonly<IProps>> = () => {
           </NavigationMenuList>
         </NavigationMenu>
 
-        {/* Controls */}
-        <div className='flex items-center gap-1'>
-          <LocaleSwitcher />
-          <UserButton />
+        {/* Desktop Controls */}
+        <div className='hidden items-center gap-1 md:flex'>
+          <LocaleSwitcherComponent />
+          <UserButtonComponent />
+        </div>
+
+        {/* Mobile Menu */}
+        <div className='flex items-center gap-1 md:hidden'>
+          <LocaleSwitcherComponent />
+          <MobileMenuComponent />
         </div>
       </div>
     </div>

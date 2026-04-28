@@ -9,7 +9,7 @@ import { routing, usePathname, useRouter } from '@/pkg/locale'
 
 interface IProps {}
 
-export const LocaleSwitcher: FC<Readonly<IProps>> = () => {
+export const LocaleSwitcherComponent: FC<Readonly<IProps>> = () => {
   const locale = useLocale()
   const router = useRouter()
   const pathname = usePathname()
@@ -31,7 +31,7 @@ export const LocaleSwitcher: FC<Readonly<IProps>> = () => {
         </Button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent className='w-24 rounded-xs' align='end'>
+      <DropdownMenuContent className='w-24 rounded-xs'>
         {routing.locales.map((l) => (
           <DropdownMenuItem
             key={l}

@@ -16,7 +16,7 @@ interface IProps {
   game: Game | FavoriteGame
 }
 
-export const GameCard: FC<Readonly<IProps>> = (props) => {
+export const GameCardComponent: FC<Readonly<IProps>> = (props) => {
   const { game } = props
   const t = useTranslations('games')
   const router = useRouter()
@@ -30,13 +30,15 @@ export const GameCard: FC<Readonly<IProps>> = (props) => {
       className='group bg-card cursor-pointer overflow-hidden rounded-sm p-0 shadow-md transition-shadow hover:shadow-lg'
     >
       {/* Cover */}
-      <div className='relative flex aspect-video w-full'>
+      <div className='relative flex aspect-video w-full overflow-hidden'>
+        <div className='bg-muted animate-pulse absolute inset-0' />
         <Image
           src={game.background_image}
           alt={game.name}
           sizes='auto'
           fill
-          className='object-cover transition-transform duration-299 group-hover:scale-105'
+          loading='eager'
+          className='object-cover transition-transform duration-300 group-hover:scale-105'
         />
       </div>
 

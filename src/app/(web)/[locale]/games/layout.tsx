@@ -2,13 +2,15 @@ import { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
 import { type FC, type ReactNode } from 'react'
 
-import { PageShell } from '@/app/widgets/page-shell'
+import { LayoutComponent } from '@/app/modules/layout'
 
 interface IProps {
   children: ReactNode
+  params: Promise<{ locale: string }>
 }
 
-export const generateMetadata = async ({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> => {
+export const generateMetadata = async (props: IProps): Promise<Metadata> => {
+  const { params } = props
   const { locale } = await params
   const t = await getTranslations({ locale, namespace: 'metadata.games' })
 
@@ -24,7 +26,7 @@ export const generateMetadata = async ({ params }: { params: Promise<{ locale: s
 const GamesLayout: FC<Readonly<IProps>> = (props) => {
   const { children } = props
 
-  return <PageShell>{children}</PageShell>
+  return <LayoutComponent type='public'>{children}</LayoutComponent>
 }
 
 export default GamesLayout

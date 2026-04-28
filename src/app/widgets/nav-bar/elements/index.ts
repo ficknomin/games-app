@@ -1,2 +1,3 @@
-export { LocaleSwitcher } from './locale-switcher.component'
-export { UserButton } from './user-button.component'
+export { LocaleSwitcherComponent } from './locale-switcher.component'
+export { MobileMenuComponent } from './mobile-menu.component'
+export { UserButtonComponent } from './user-button.component'
