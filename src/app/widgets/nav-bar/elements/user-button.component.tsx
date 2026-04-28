@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl'
 import { type FC } from 'react'
 
 import { signOut } from '@/app/features/auth'
-import { useSessionStore } from '@/app/shared/store'
+import { useFavoritesStore, useSessionStore } from '@/app/shared/store'
 import { Button } from '@/app/shared/ui/button'
 import {
   DropdownMenu,
@@ -23,6 +23,7 @@ export const UserButtonComponent: FC<Readonly<IProps>> = () => {
   const t = useTranslations('userMenu')
   const user = useSessionStore((s) => s.user)
   const clearSession = useSessionStore((s) => s.clearSession)
+  const clearFavorites = useFavoritesStore((s) => s.setFavorites)
 
   return (
     <DropdownMenu>
@@ -40,6 +41,7 @@ export const UserButtonComponent: FC<Readonly<IProps>> = () => {
             <DropdownMenuItem
               onClick={() => {
                 clearSession()
+                clearFavorites([])
                 signOut()
               }}
               className='hover:cursor-pointer'
