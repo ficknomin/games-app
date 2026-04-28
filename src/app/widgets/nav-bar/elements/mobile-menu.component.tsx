@@ -16,14 +16,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/app/shared/ui/dropdown-menu'
-import { useRouter } from '@/pkg/locale'
+import { Link } from '@/pkg/locale'
 
 interface IProps {}
 
 export const MobileMenuComponent: FC<Readonly<IProps>> = () => {
   const tNav = useTranslations('nav')
   const tUser = useTranslations('userMenu')
-  const router = useRouter()
   const user = useSessionStore((s) => s.user)
   const clearSession = useSessionStore((s) => s.clearSession)
 
@@ -39,17 +38,23 @@ export const MobileMenuComponent: FC<Readonly<IProps>> = () => {
       <DropdownMenuContent className='w-48' align='end'>
         <DropdownMenuGroup>
           <DropdownMenuLabel>{tNav('navigation')}</DropdownMenuLabel>
-          <DropdownMenuItem onClick={() => router.push('/')} className='cursor-pointer'>
-            <HomeIcon />
-            {tNav('home')}
+          <DropdownMenuItem asChild className='cursor-pointer'>
+            <Link href='/'>
+              <HomeIcon />
+              {tNav('home')}
+            </Link>
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => router.push('/games')} className='cursor-pointer'>
-            <GamepadIcon />
-            {tNav('allGames')}
+          <DropdownMenuItem asChild className='cursor-pointer'>
+            <Link href='/games'>
+              <GamepadIcon />
+              {tNav('allGames')}
+            </Link>
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => router.push('/games/favorites')} className='cursor-pointer'>
-            <HeartIcon />
-            {tNav('favorites')}
+          <DropdownMenuItem asChild className='cursor-pointer'>
+            <Link href='/games/favorites'>
+              <HeartIcon />
+              {tNav('favorites')}
+            </Link>
           </DropdownMenuItem>
         </DropdownMenuGroup>
 
@@ -70,13 +75,17 @@ export const MobileMenuComponent: FC<Readonly<IProps>> = () => {
             </DropdownMenuItem>
           ) : (
             <>
-              <DropdownMenuItem onClick={() => router.push('/login')} className='cursor-pointer'>
-                <LogInIcon />
-                {tUser('signIn')}
+              <DropdownMenuItem asChild className='cursor-pointer'>
+                <Link href='/login'>
+                  <LogInIcon />
+                  {tUser('signIn')}
+                </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => router.push('/register')} className='cursor-pointer'>
-                <UserPlusIcon />
-                {tUser('signUp')}
+              <DropdownMenuItem asChild className='cursor-pointer'>
+                <Link href='/register'>
+                  <UserPlusIcon />
+                  {tUser('signUp')}
+                </Link>
               </DropdownMenuItem>
             </>
           )}

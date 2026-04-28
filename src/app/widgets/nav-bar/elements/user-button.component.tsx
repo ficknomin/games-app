@@ -15,7 +15,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '@/app/shared/ui/dropdown-menu'
-import { useRouter } from '@/pkg/locale'
+import { Link } from '@/pkg/locale'
 
 interface IProps {}
 
@@ -23,7 +23,6 @@ export const UserButtonComponent: FC<Readonly<IProps>> = () => {
   const t = useTranslations('userMenu')
   const user = useSessionStore((s) => s.user)
   const clearSession = useSessionStore((s) => s.clearSession)
-  const router = useRouter()
 
   return (
     <DropdownMenu>
@@ -49,12 +48,12 @@ export const UserButtonComponent: FC<Readonly<IProps>> = () => {
             </DropdownMenuItem>
           ) : (
             <>
-              <DropdownMenuItem onClick={() => router.push('/login')} className='hover:cursor-pointer'>
-                {t('signIn')}
+              <DropdownMenuItem asChild className='hover:cursor-pointer'>
+                <Link href='/login'>{t('signIn')}</Link>
               </DropdownMenuItem>
 
-              <DropdownMenuItem onClick={() => router.push('/register')} className='hover:cursor-pointer'>
-                {t('signUp')}
+              <DropdownMenuItem asChild className='hover:cursor-pointer'>
+                <Link href='/register'>{t('signUp')}</Link>
               </DropdownMenuItem>
             </>
           )}
